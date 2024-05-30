@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- TAB TITLE -->
+    <title><%= app_name %> - Simplify Your Finances</title>
+    <!-- LINK TO STYLESHEETS / GOOGLE FONTS -->
+    <link rel="stylesheet" href="/styles/general.css">
+    <link rel="stylesheet" href="/styles/home.css">
+    <link href='https://fonts.googleapis.com/css?family=Rubik' rel='stylesheet'>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <!-- HEADER: Logo -->
+            <a href="/" class="logo">
+                <h1><%= app_name %></h1>
+            </a>
+            <!-- HEADER: Navigation Links -->
+            <nav>
+                <ul>
+                    <li><a href="/features">Features</a></li>
+                    <li><a href="/pricing">Pricing</a></li>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/account/login">Log In</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+        <!-- MAIN: Introduction -->
+        <section class="intro container">
+            <h2>Take Control of Your Finances with Ease</h2>
+            <p>Welcome to <%= app_name %>, the ultimate tool for managing your personal finances effortlessly. Track your expenses, set budgets, and achieve your financial goals.</p>
+            <a href="/account/login" class="btn">Log In Here</a>
+        </section>
+
+        <!-- MAIN: Features -->
+        <section class="features container">
+            <h3>Why Choose <%= app_name %>?</h3>
+            <ul>
+                <li>
+                    <h4>Easy Expense Tracking</h4>
+                    <p>Log your expenses quickly and effortlessly.</p>
+                </li>
+                <li>
+                    <h4>Set and Monitor Budgets</h4>
+                    <p>Create budgets for different categories and track your spending.</p>
+                </li>
+                <li>
+                    <h4>Detailed Reports</h4>
+                    <p>Generate insightful reports to see where your money goes.</p>
+                </li>
+                <li>
+                    <h4>Secure and Private</h4>
+                    <p>Your financial data is encrypted and securely stored.</p>
+                </li>
+            </ul>
+        </section>
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
+        <!-- FOOTER: Rights -->
+        <div class="rights container">
+            <p>&copy; 2024 <%= app_name %>. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

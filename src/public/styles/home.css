@@ -1,0 +1,85 @@
+/* Specific styles for the home page */
+
+.intro {
+    background-color: white;
+    padding: 40px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.intro h2 {
+    margin-top: 0;
+    font-size: 2.2em;
+    color: #607D8B;
+}
+
+.intro p {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.intro .btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #607D8B, #78909C);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 1em;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.intro .btn:hover {
+    background: linear-gradient(135deg, #546E7A, #607D8B);
+    transform: scale(1.05);
+}
+
+.features {
+    background-color: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.features h3 {
+    margin-top: 0;
+    font-size: 1.8em;
+    color: #607D8B;
+    text-align: center;
+}
+
+.features ul {
+    list-style: none;
+    padding: 0;
+}
+
+.features ul li {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.features ul li h4 {
+    font-size: 1.4em;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.features ul li p {
+    margin: 0;
+    font-size: 1.1em;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .intro, .features {
+        padding: 20px;
+    }
+
+    .intro h2, .features h3 {
+        font-size: 1.5em;
+    }
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- TAB TITLE -->
+    <title>Log In / Register - <%= app_name %></title>
+    <!-- LINK TO STYLESHEETS / GOOGLE FONTS -->
+    <link rel="stylesheet" href="/styles/general.css"> 
+    <link rel="stylesheet" href="/styles/login.css"> 
+    <link href='https://fonts.googleapis.com/css?family=Rubik' rel='stylesheet'>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <!-- HEADER: Logo -->
+            <a href="/" class="logo">
+                <h1><%= app_name %></h1>
+            </a>
+            <!-- HEADER: Navigation Links -->
+            <nav>
+                <ul>
+                    <li><a href="/features">Features</a></li>
+                    <li><a href="/pricing">Pricing</a></li>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/account/login">Log In</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+        <div class="container">
+            <!-- MAIN: Forms -->
+            <div class="form-container">
+                <!-- Toggle Buttons -->
+                <div class="form-toggle">
+                    <button id="login-toggle" onclick="toggleLogin()">Log In</button>
+                    <button id="register-toggle" onclick="toggleRegister()">Register</button>
+                </div>
+                <!-- Log In Form -->
+                <form id="login-form" class="form-content" method="POST" action="/account/login">
+                    <h2>Log In</h2>
+                    <label for="login-email">Email:</label>
+                    <input type="email" id="login-email" name="email" required>
+                    <label for="login-password">Password:</label>
+                    <input type="password" id="login-password" name="password" required>
+                    <button type="submit" class="btn">Log In</button>
+                    <% if (typeof message !== 'undefined') { %>
+                        <div class="message <%= messageClass %>"><%= message %></div>
+                    <% } %>
+                </form>
+                <!-- Register Form -->
+                <form id="register-form" class="form-content" method="POST" action="/account/register">
+                    <h2>Register</h2>
+                    <label for="register-email">Email:</label>
+                    <input type="email" id="register-email" name="email" required>
+                    <label for="register-password">Password:</label>
+                    <input type="password" id="register-password" name="password" required>
+                    <label for="register-confirm-password">Confirm Password:</label>
+                    <input type="password" id="register-confirm-password" name="confirmPassword" required>
+                    <button type="submit" class="btn">Register</button>
+                    <% if (typeof message !== 'undefined') { %>
+                        <div class="message <%= messageClass %>"><%= message %></div>
+                    <% } %>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <!-- FOOTER: Rights -->
+        <div class="container">
+            <p>&copy; 2024 <%= app_name %>. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- LINK TO SCRIPT -->
+    <script src="/scripts/toggleForms.js"></script>
+</body>
+</html>

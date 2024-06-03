@@ -1,0 +1,79 @@
+/* Specific styles for the login/register page */
+
+.form-container {
+    background: white;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    margin-top: 50px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.form-toggle {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.form-toggle button {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 10px 20px;
+}
+
+.form-toggle button.active {
+    border-bottom: 2px solid #607D8B;
+    color: #607D8B;
+}
+
+.form-content {
+    display: none;
+}
+
+.form-content h2 {
+    margin-top: 0;
+}
+
+.form-content label {
+    display: block;
+    margin-top: 10px;
+}
+
+.form-content input {
+    width: 95%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.btn {
+    background-color: #607D8B;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    display: block;
+    width: 100%;
+}
+
+.message {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.message.positive {
+    color: black;
+}
+
+.message.negative {
+    color: red;
+}

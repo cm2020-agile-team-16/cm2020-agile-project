@@ -26,7 +26,7 @@ global.db = new sqlite3.Database('./database.db',function(err){
 });
 
 // Set the app name
-const appName = "Minimalist Budget App";
+const appName = "BudgetFlow";
 
 // Middleware to add app_name to all responses
 app.use((req, res, next) => {

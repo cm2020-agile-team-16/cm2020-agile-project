@@ -106,9 +106,9 @@ router.get('/dashboard', (req, res) => {
 });
 
 /**
- * @desc Renders the edit-income page
+ * @desc Renders the income page
  */
-router.get('/edit-income', (req, res) => {
+router.get('/income', (req, res) => {
     const incomeQuery = 'SELECT * FROM income'; // Adjust this query if you need to filter by user
     const categoryQuery = 'SELECT * FROM categories WHERE type = "income"';
 
@@ -123,7 +123,7 @@ router.get('/edit-income', (req, res) => {
                     return res.status(500).send(err.message);
                 }
 
-                res.render('edit-income', { incomes, categories });
+                res.render('income', { incomes, categories });
             });
         });
     });

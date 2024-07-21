@@ -1,42 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TAB TITLE -->
-    <title><%= app_name %> - Simplify Your Finances</title>
+    <title>Home - <%= app_name %></title>
     <!-- LINK TO STYLESHEETS / GOOGLE FONTS -->
     <link rel="stylesheet" href="/styles/general.css">
     <link rel="stylesheet" href="/styles/home.css">
-    <link href='https://fonts.googleapis.com/css?family=Rubik' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
 </head>
-<body>
-    <!-- HEADER -->
-    <header>
-        <div class="container">
-            <!-- HEADER: Logo -->
-            <a href="/" class="logo">
-                <h1><%= app_name %></h1>
-            </a>
-            <!-- HEADER: Navigation Links -->
-            <nav>
-                <ul>
-                    <li><a href="/features">Features</a></li>
-                    <li><a href="/pricing">Pricing</a></li>
-                    <li><a href="/about">About Us</a></li>
-                    <li><a href="/account/login">Log In</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
 
+<body>
     <!-- MAIN -->
     <main>
         <!-- MAIN: Introduction -->
         <section class="intro container">
+            <a href="/"><img src="/assets/logo/budgetflow_logo_light.svg" alt="BudgetFlow Logo (Light)"></a>
             <h2>Take Control of Your Finances with Ease</h2>
-            <p>Welcome to <%= app_name %>, the ultimate tool for managing your personal finances effortlessly. Track your expenses, set budgets, and achieve your financial goals.</p>
-            <a href="/account/login" class="btn">Log In Here</a>
+            <p>Welcome to <%= app_name %>, the ultimate tool for managing your personal finances effortlessly.</p>
+            <a href="/account/login" class="btn">Log In</a>
         </section>
 
         <!-- MAIN: Features -->
@@ -68,7 +52,7 @@
     <footer>
         <!-- FOOTER: Rights -->
         <div class="rights container">
-            <p>&copy; 2024 <%= app_name %>. All rights reserved.</p>
+            <p>CM2020 Agile Software Projects: <%= app_name %></p>
         </div>
     </footer>
 </body>

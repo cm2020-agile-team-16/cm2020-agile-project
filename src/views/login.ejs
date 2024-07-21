@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,33 +9,16 @@
     <!-- LINK TO STYLESHEETS / GOOGLE FONTS -->
     <link rel="stylesheet" href="/styles/general.css"> 
     <link rel="stylesheet" href="/styles/login.css"> 
-    <link href='https://fonts.googleapis.com/css?family=Rubik' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
 </head>
-<body>
-    <!-- HEADER -->
-    <header>
-        <div class="container">
-            <!-- HEADER: Logo -->
-            <a href="/" class="logo">
-                <h1><%= app_name %></h1>
-            </a>
-            <!-- HEADER: Navigation Links -->
-            <nav>
-                <ul>
-                    <li><a href="/features">Features</a></li>
-                    <li><a href="/pricing">Pricing</a></li>
-                    <li><a href="/about">About Us</a></li>
-                    <li><a href="/account/login">Log In</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
 
+<body>
     <!-- MAIN -->
     <main>
         <div class="container">
             <!-- MAIN: Forms -->
             <div class="form-container">
+                <a href="/"><img src="/assets/logo/budgetflow_logo_light.svg" alt="BudgetFlow Logo (Light)" class="logo"></a>
                 <!-- Toggle Buttons -->
                 <div class="form-toggle">
                     <button id="login-toggle" onclick="toggleLogin()">Log In</button>
@@ -42,7 +26,8 @@
                 </div>
                 <!-- Log In Form -->
                 <form id="login-form" class="form-content" method="POST" action="/account/login">
-                    <h2>Log In</h2>
+                    <h2>Welcome back</h2>
+                    <h3>Enter your credentials to login</h3>
                     <label for="login-email">Email:</label>
                     <input type="email" id="login-email" name="email" required>
                     <label for="login-password">Password:</label>
@@ -51,10 +36,14 @@
                     <% if (typeof message !== 'undefined') { %>
                         <div class="message <%= messageClass %>"><%= message %></div>
                     <% } %>
+
+                    <p><a href="recovery">Forgot password?</a></p>
+                    <p id="register-toggle" onclick="toggleRegister()">Don't have an account? <u>Register</u></p>
                 </form>
                 <!-- Register Form -->
                 <form id="register-form" class="form-content" method="POST" action="/account/register">
                     <h2>Register</h2>
+                    <h3>Enter your information below</h3>
                     <label for="register-first-name">First Name:</label>
                     <input type="text" id="register-first-name" name="firstName" required>
                     <label for="register-last-name">Last Name:</label>
@@ -69,6 +58,7 @@
                     <% if (typeof message !== 'undefined') { %>
                         <div class="message <%= messageClass %>"><%= message %></div>
                     <% } %>
+                    <p id="login-toggle" onclick="toggleLogin()">Already have an account? <u>Log In</u></p>
                 </form>
             </div>
         </div>
@@ -78,7 +68,7 @@
     <footer>
         <!-- FOOTER: Rights -->
         <div class="container">
-            <p>&copy; 2024 <%= app_name %>. All rights reserved.</p>
+            <p>CM2020 Agile Software Projects: <%= app_name %></p>
         </div>
     </footer>
 

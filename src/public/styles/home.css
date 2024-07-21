@@ -1,7 +1,7 @@
 /* Specific styles for the home page */
 
 .intro {
-    background-color: white;
+    background: linear-gradient(135deg, #0097b2, #7ed957);
     padding: 40px;
     margin-bottom: 20px;
     border-radius: 12px;
@@ -12,7 +12,7 @@
 .intro h2 {
     margin-top: 0;
     font-size: 2.2em;
-    color: #607D8B;
+    color: black;
 }
 
 .intro p {
@@ -23,8 +23,8 @@
 
 .intro .btn {
     display: inline-block;
-    padding: 12px 24px;
-    background: linear-gradient(135deg, #607D8B, #78909C);
+    padding: 1% 8%;
+    background: black;
     color: white;
     text-decoration: none;
     border-radius: 25px;
@@ -34,12 +34,11 @@
 }
 
 .intro .btn:hover {
-    background: linear-gradient(135deg, #546E7A, #607D8B);
     transform: scale(1.05);
 }
 
 .features {
-    background-color: white;
+    background: linear-gradient(135deg, #0097b2, #7ed957);
     padding: 40px;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -48,7 +47,7 @@
 .features h3 {
     margin-top: 0;
     font-size: 1.8em;
-    color: #607D8B;
+    color: black;
     text-align: center;
 }
 

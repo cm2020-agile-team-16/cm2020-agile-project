@@ -1,4 +1,4 @@
-##  Recipe Generator ##
+##  Minimalist Budgeting App ##
 ### CM2020 Agile Software Projects ###
 
 #### Installation requirements ####

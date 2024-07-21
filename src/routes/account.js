@@ -17,7 +17,7 @@ router.get('/login', (req, res) => {
  * @desc Handles the register form submission
  */
 router.post('/register', (req, res, next) => {
-    const { email, password, confirmPassword } = req.body;
+    const { firstName, lastName, email, password, confirmPassword } = req.body;
 
     // Check if email already exists
     const checkEmailQuery = "SELECT * FROM users WHERE email = ?";
@@ -33,8 +33,8 @@ router.post('/register', (req, res, next) => {
                 res.render('login', { message: 'The passwords do not match. Please try again.', messageClass: 'negative' });
             } else {
                 // Store user data into database
-                const insertUserQuery = 'INSERT INTO users (email, password) VALUES (?, ?)';
-                db.run(insertUserQuery, [email, password], function(err) {
+                const insertUserQuery = 'INSERT INTO users (firstName, lastName, email, password) VALUES (?, ?, ?, ?)';
+                db.run(insertUserQuery, [firstName, lastName, email, password], function(err) {
                     if (err) {
                         next(err); // Pass the error to the error handler
                     } else {
@@ -65,10 +65,8 @@ router.post('/login', (req, res, next) => {
             if (user.password !== password) {
                 res.render('login', { message: 'Incorrect password. Please try again.', messageClass: 'negative' });
             } else {
-                // Successful login
-                res.render('login', { message: 'Login successful! Welcome back.', messageClass: 'positive' });
-                // Redirect to a different page upon successful login
-                // res.redirect('/?');
+                // Redirect to the user dashboard upon successful login
+                res.redirect('/user/dashboard');
             }
         }
     });

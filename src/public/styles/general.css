@@ -1,10 +1,10 @@
 /* General styles to be set for all webpages */
 
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
-    background: linear-gradient(135deg, #f9f9f9 25%, #f4f4f4 100%);
+    background: black;
     color: #333;
 }
 
@@ -56,6 +56,15 @@ main {
     padding: 40px 0;
 }
 
+main > div {
+    margin-bottom: 20px;
+}
+
+main > div p {
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+
 
 
 footer {
@@ -80,6 +89,7 @@ footer p {
 }
 
 @media (max-width: 768px) {
+    
     header h1 {
         font-size: 2em;
     }
@@ -87,5 +97,9 @@ footer p {
     nav ul li {
         display: block;
         margin: 10px 0;
+    }
+
+    main {
+        padding: 20px 10px;
     }
 }

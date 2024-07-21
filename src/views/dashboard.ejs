@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - <%= app_name %></title>
+    <link rel="stylesheet" href="/styles/general.css">
+    <link rel="stylesheet" href="/styles/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <!-- HEADER: Welcome -->
+        <section class="welcome container">
+            <h2>Welcome back, <%= firstName %></h2>
+        </section>
+
+        <!-- HEADER: Title -->
+        <section class="intro container">
+            <h1>My Dashboard</h1>
+            <a href="/account/profile"><img src="/assets/images/pfp.jpg" alt="profile picture"></a>
+        </section>
+    </header>
+    
+    <!-- MAIN -->
+    <main>
+        <!-- MAIN: Balance Card -->
+        <section class="balance container">
+            <p>Current Balance: $<%= balance %></p>
+            <p>Total Income: $<%= totalIncome %></p>
+            <p>Total Expenses: $<%= totalExpenses %></p>
+        </section>
+
+        <!-- MAIN: Budgets -->
+        <section class="budgets container">
+
+        </section>
+
+        <!-- MAIN: Recent Transactions -->
+        <section class="transactions container">
+            <h2>Recent Transactions</h2>
+            <ul>
+                <% recentTransactions.forEach(function(transaction) { %>
+                    <li>
+                        $<%= transaction.amount %> 
+                        <%= transaction.type === 'income' ? 'from' : 'for' %> 
+                        <%= transaction.category %> (<%= transaction.source %>) 
+                        on <%= new Date(transaction.date).toLocaleDateString() %>
+                        <a href="/user/edit-<%= transaction.type %>?id=<%= transaction.id %>">Edit</a>
+                        <a href="/delete/<%= transaction.type %>/<%= transaction.id %>">Delete</a>
+                    </li>
+                <% }) %>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <!-- FOOTER: Links to webpages -->
+        <div class="links container">
+            <nav>
+                <ul>
+                    <li><a href="/user/income">My Income</a></li>
+                    <li><a href="/user/expense">My Expenses</a></li>
+                    <li><a href="/user/summary">Summary</a></li>
+                </ul>
+            </nav>
+        </div>
+    </footer>
+</body>
+</html>

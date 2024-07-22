@@ -1,2 +1,57 @@
 /* Specific styles for the dashboard page */
 
+.welcome h2 {
+    font-size: 2em;
+    margin: 0;
+}
+
+.intro h1 {
+    font-size: 3em;
+    margin: 0;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.intro img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-left: 20px;
+    vertical-align: middle;
+}
+
+.balance, .budgets, .transactions {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.balance p, .transactions h2 {
+    font-size: 1.5em;
+    margin: 0 0 10px 0;
+}
+
+.transactions ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.transactions li {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.transactions a {
+    color: #607D8B;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.transactions a:hover {
+    text-decoration: underline;
+}

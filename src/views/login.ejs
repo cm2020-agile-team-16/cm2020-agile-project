@@ -19,12 +19,14 @@
             <!-- MAIN: Forms -->
             <div class="form-container">
                 <a href="/"><img src="/assets/logo/budgetflow_logo_light.svg" alt="BudgetFlow Logo (Light)" class="logo"></a>
-                <!-- Toggle Buttons -->
+
+                <!-- FORMS: Toggle Buttons -->
                 <div class="form-toggle">
                     <button id="login-toggle" onclick="toggleLogin()">Log In</button>
                     <button id="register-toggle" onclick="toggleRegister()">Register</button>
                 </div>
-                <!-- Log In Form -->
+
+                <!-- FORMS: Log In Form -->
                 <form id="login-form" class="form-content" method="POST" action="/account/login">
                     <h2>Welcome back</h2>
                     <h3>Enter your credentials to login</h3>
@@ -40,7 +42,8 @@
                     <p><a href="recovery">Forgot password?</a></p>
                     <p id="register-toggle" onclick="toggleRegister()">Don't have an account? <u>Register</u></p>
                 </form>
-                <!-- Register Form -->
+
+                <!-- FORMS: Register Form -->
                 <form id="register-form" class="form-content" method="POST" action="/account/register">
                     <h2>Register</h2>
                     <h3>Enter your information below</h3>
@@ -60,19 +63,21 @@
                     <% } %>
                     <p id="login-toggle" onclick="toggleLogin()">Already have an account? <u>Log In</u></p>
                 </form>
+
             </div>
         </div>
     </main>
 
     <!-- FOOTER -->
     <footer>
-        <!-- FOOTER: Rights -->
-        <div class="container">
+        <!-- FOOTER: About -->
+        <div class="about container">
             <p>CM2020 Agile Software Projects: <%= app_name %></p>
         </div>
     </footer>
 
-    <!-- LINK TO SCRIPT -->
+    <!-- LINK TO SCRIPTS -->
     <script src="/scripts/toggleForms.js"></script>
+
 </body>
 </html>

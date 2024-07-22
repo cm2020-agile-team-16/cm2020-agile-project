@@ -5,12 +5,18 @@
 
 // Set up express, bodyparser and EJS
 const express = require('express');
+const session = require('express-session');
 const app = express();
 const port = 3000;
 var bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs'); // set the app to use ejs for rendering
 app.use(express.static(__dirname + '/public')); // set location of static files
+app.use(session({
+    secret: 'secret_key',
+    resave: false,
+    saveUninitialized: true, // Set to true if using HTTPS
+}));
 
 // Set up SQLite
 // Items in the global namespace are accessible throught out the node application

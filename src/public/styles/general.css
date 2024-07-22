@@ -65,8 +65,6 @@ main > div p {
     margin: 10px 0;
 }
 
-
-
 footer {
     background-color: #333;
     color: white;
@@ -88,7 +86,26 @@ footer p {
     margin: 0;
 }
 
+/* Hide mobile links by default */
+.mobile.links {
+    display: none;
+}
+
+/* Show desktop links by default */
+.desktop.links {
+    display: block;
+}
+
 @media (max-width: 768px) {
+    /* Hide desktop links on small screens */
+    .desktop.links {
+        display: none;
+    }
+
+    /* Show mobile links on small screens */
+    .mobile.links {
+        display: block;
+    }
     
     header h1 {
         font-size: 2em;

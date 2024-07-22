@@ -1,102 +1,100 @@
-// user.js
+/**
+ * user.js
+ * These are routes for user management
+ */
+
 const express = require('express');
 const router = express.Router();
 
 /**
- * @desc Renders the dashboard page
+ * @desc Renders the user dashboard
  */
 router.get('/dashboard', (req, res) => {
-    const userId = 1; // Assuming user is logged in and their ID is 1, replace with actual user session data
+    // redirect user to login if no session is found
+    if (!req.session.userId) {
+        console.log('No user ID found in session, redirecting to login'); // Debug log
+        return res.redirect('/account/login');
+    }
 
+    // save user's ID
+    const userId = req.session.userId;
+
+    // create query to retrieve user's first name
     const userQuery = "SELECT firstName FROM users WHERE user_id = ?";
-    const balanceQuery = `
-        SELECT 
-            (SELECT COALESCE(SUM(amount), 0) FROM income WHERE user_id = ?) -
-            (SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE user_id = ?) AS balance
-    `;
-    const transactionsQuery = `
-        SELECT * FROM (
-            SELECT income_id AS id, user_id, category_id, source, amount, date, 'income' AS type
-            FROM income
-            WHERE user_id = ?
-            UNION ALL
-            SELECT expense_id AS id, user_id, category_id, source, amount, date, 'expense' AS type
-            FROM expenses
-            WHERE user_id = ?
-        )
-        ORDER BY date DESC
-        LIMIT 5
-    `;
-    const totalIncomeQuery = "SELECT COALESCE(SUM(amount), 0) as totalIncome FROM income WHERE user_id = ?";
-    const totalExpensesQuery = "SELECT COALESCE(SUM(amount), 0) as totalExpenses FROM expenses WHERE user_id = ?";
+    db.get(userQuery, [userId], (err, user) => {
+        if (err) {
+            console.error(err.message);
+            return res.sendStatus(500);
+        }
 
-    db.serialize(() => {
-        db.get(userQuery, [userId], (err, userRow) => {
+        // save user's first name
+        const firstName = user.firstName;
+
+        // create query to retrieve user's balance (totalIncome - totalExpenses)
+        const balanceQuery = "SELECT (SELECT COALESCE(SUM(amount), 0) FROM income WHERE user_id = ?) - (SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE user_id = ?) AS balance";
+
+        // create query to retrieve user's total income
+        const totalIncomeQuery = "SELECT COALESCE(SUM(amount), 0) AS totalIncome FROM income WHERE user_id = ?";
+
+        // create query to retrieve user's total expenses
+        const totalExpensesQuery = "SELECT COALESCE(SUM(amount), 0) AS totalExpenses FROM expenses WHERE user_id = ?";
+
+        // create query to retrieve user's recent transactions
+        const recentTransactionsQuery = `
+        SELECT * FROM (
+            SELECT 'income' AS type, source, amount, date, IC.name AS category
+            FROM income I
+            JOIN incomeCategory IC ON I.income_category_id = IC.income_category_id
+            WHERE I.user_id = ?
+            UNION
+            SELECT 'expense' AS type, source, amount, date, EC.name AS category
+            FROM expenses E
+            JOIN expenseCategory EC ON E.expense_category_id = EC.expense_category_id
+            WHERE E.user_id = ?
+        )
+        ORDER BY date DESC LIMIT 3`; 
+
+        // run balance query
+        db.get(balanceQuery, [userId, userId], (err, row) => {
             if (err) {
                 console.error(err.message);
                 return res.sendStatus(500);
             }
-            const firstName = userRow.firstName;
 
-            db.get(balanceQuery, [userId, userId], (err, row) => {
+            const balance = row.balance;
+
+            // run total income query
+            db.get(totalIncomeQuery, [userId], (err, row) => {
                 if (err) {
                     console.error(err.message);
                     return res.sendStatus(500);
                 }
-                const balance = row.balance || 0;
 
-                db.get(totalIncomeQuery, [userId], (err, totalIncomeRow) => {
+                const totalIncome = row.totalIncome;
+
+                // run total expenses query
+                db.get(totalExpensesQuery, [userId], (err, row) => {
                     if (err) {
                         console.error(err.message);
                         return res.sendStatus(500);
                     }
-                    const totalIncome = totalIncomeRow.totalIncome;
 
-                    db.get(totalExpensesQuery, [userId], (err, totalExpensesRow) => {
+                    const totalExpenses = row.totalExpenses;
+
+                    // run recent transactions query
+                    db.all(recentTransactionsQuery, [userId, userId], (err, recentTransactions) => {
                         if (err) {
                             console.error(err.message);
                             return res.sendStatus(500);
                         }
-                        const totalExpenses = totalExpensesRow.totalExpenses;
 
-                        db.all(transactionsQuery, [userId, userId], (err, recentTransactions) => {
-                            if (err) {
-                                console.error(err.message);
-                                return res.sendStatus(500);
-                            }
-
-                            // Fetch categories for recent transactions
-                            const categoryIds = recentTransactions.map(t => t.category_id).filter(id => id != null);
-                            const placeholders = categoryIds.map(() => '?').join(',');
-                            const categoriesQuery = `
-                                SELECT category_id, name
-                                FROM categories
-                                WHERE category_id IN (${placeholders})
-                            `;
-
-                            db.all(categoriesQuery, categoryIds, (err, categories) => {
-                                if (err) {
-                                    console.error(err.message);
-                                    return res.sendStatus(500);
-                                }
-
-                                const categoryMap = categories.reduce((map, category) => {
-                                    map[category.category_id] = category.name;
-                                    return map;
-                                }, {});
-
-                                recentTransactions.forEach(transaction => {
-                                    transaction.category = categoryMap[transaction.category_id] || 'Unknown';
-                                });
-
-                                res.render('dashboard', {
-                                    firstName: firstName,
-                                    balance: balance,
-                                    totalIncome: totalIncome,
-                                    totalExpenses: totalExpenses,
-                                    recentTransactions: recentTransactions
-                                });
-                            });
+                        // if there are no errors, load the user's dashboard
+                        res.render('dashboard', {
+                            firstName,
+                            balance,
+                            totalIncome,
+                            totalExpenses,
+                            recentTransactions
                         });
                     });
                 });
@@ -105,60 +103,70 @@ router.get('/dashboard', (req, res) => {
     });
 });
 
-/**
- * @desc Renders the income page
- */
-router.get('/income', (req, res) => {
-    const incomeQuery = 'SELECT * FROM income'; // Adjust this query if you need to filter by user
-    const categoryQuery = 'SELECT * FROM categories WHERE type = "income"';
 
-    db.serialize(() => {
-        db.all(incomeQuery, (err, incomes) => {
-            if (err) {
-                return res.status(500).send(err.message);
-            }
+// /**
+//  * @desc Adds a new income record
+//  */
+// router.post('/income', (req, res) => {
+//     const { userId, category, source, amount } = req.body;
+//     const query = "INSERT INTO income (user_id, income_category_id, source, amount) VALUES (?, ?, ?, ?)";
 
-            db.all(categoryQuery, (err, categories) => {
-                if (err) {
-                    return res.status(500).send(err.message);
-                }
+//     db.run(query, [userId, category, source, amount], function (err) {
+//         if (err) {
+//             console.error(err.message);
+//             return res.sendStatus(500);
+//         }
+//         res.redirect('/dashboard');
+//     });
+// });
 
-                res.render('income', { incomes, categories });
-            });
-        });
-    });
-});
+// /**
+//  * @desc Adds a new expense record
+//  */
+// router.post('/expenses', (req, res) => {
+//     const { userId, category, source, amount } = req.body;
+//     const query = "INSERT INTO expenses (user_id, expense_category_id, source, amount) VALUES (?, ?, ?, ?)";
 
-/**
- * @desc Handles the form submission and updates the income entry or adds a new entry
- */
-router.post('/edit-income', (req, res) => {
-    const { id, category_id, source, amount } = req.body;
-    console.log('Received data:', req.body); // Log the received data
+//     db.run(query, [userId, category, source, amount], function (err) {
+//         if (err) {
+//             console.error(err.message);
+//             return res.sendStatus(500);
+//         }
+//         res.redirect('/dashboard');
+//     });
+// });
 
-    if (id.startsWith('new-')) {
-        // Handle new income entry
-        const insertQuery = 'INSERT INTO income (category_id, source, amount) VALUES (?, ?, ?)';
-        db.run(insertQuery, [category_id, source, amount], (err) => {
-            if (err) {
-                console.error('Insert error:', err.message); // Log errors
-                return res.status(500).send(err.message);
-            }
-            console.log('Insert successful');
-            res.redirect('/user/edit-income'); // Redirect back to the edit-income page after successful insert
-        });
-    } else {
-        // Handle existing income update
-        const updateQuery = 'UPDATE income SET category_id = ?, source = ?, amount = ? WHERE income_id = ?';
-        db.run(updateQuery, [category_id, source, amount, id], (err) => {
-            if (err) {
-                console.error('Update error:', err.message); // Log errors
-                return res.status(500).send(err.message);
-            }
-            console.log('Update successful');
-            res.redirect('/user/edit-income'); // Redirect back to the edit-income page after successful update
-        });
-    }
-});
+// /**
+//  * @desc Adds a new income budget record
+//  */
+// router.post('/income-budget', (req, res) => {
+//     const { userId, category, amount } = req.body;
+//     const query = "INSERT INTO incomeBudget (user_id, income_category_id, amount) VALUES (?, ?, ?)";
 
+//     db.run(query, [userId, category, amount], function (err) {
+//         if (err) {
+//             console.error(err.message);
+//             return res.sendStatus(500);
+//         }
+//         res.redirect('/dashboard');
+//     });
+// });
+
+// /**
+//  * @desc Adds a new expense budget record
+//  */
+// router.post('/expense-budget', (req, res) => {
+//     const { userId, category, amount } = req.body;
+//     const query = "INSERT INTO expenseBudget (user_id, expense_category_id, amount) VALUES (?, ?, ?)";
+
+//     db.run(query, [userId, category, amount], function (err) {
+//         if (err) {
+//             console.error(err.message);
+//             return res.sendStatus(500);
+//         }
+//         res.redirect('/dashboard');
+//     });
+// });
+
+// export the router object so index.js can access it
 module.exports = router;

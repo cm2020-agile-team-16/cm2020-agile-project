@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- TAB TITLE -->
     <title>Dashboard - <%= app_name %></title>
+    <!-- LINK TO STYLESHEETS / GOOGLE FONTS -->
     <link rel="stylesheet" href="/styles/general.css">
     <link rel="stylesheet" href="/styles/dashboard.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
 </head>
+
 <body>
     <!-- HEADER -->
     <header>
@@ -18,8 +23,19 @@
         <!-- HEADER: Title -->
         <section class="intro container">
             <h1>My Dashboard</h1>
-            <a href="/account/profile"><img src="/assets/images/pfp.jpg" alt="profile picture"></a>
+            <a href="/account/profile"><img src="/assets/images/pfp.png" alt="profile picture"></a>
         </section>
+
+        <!-- HEADER: Links to Webpages (DESKTOP ONLY) -->
+        <section class="desktop links container">
+            <nav>
+                <ul>
+                    <li><a href="/user/income">My Income</a></li>
+                    <li><a href="/user/expense">My Expenses</a></li>
+                    <li><a href="/user/summary">Summary</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
     
     <!-- MAIN -->
@@ -33,7 +49,7 @@
 
         <!-- MAIN: Budgets -->
         <section class="budgets container">
-
+            <h2>Budgets</h2>
         </section>
 
         <!-- MAIN: Recent Transactions -->
@@ -54,9 +70,10 @@
         </section>
     </main>
 
+    <!-- FOOTER -->
     <footer>
-        <!-- FOOTER: Links to webpages -->
-        <div class="links container">
+        <!-- FOOTER: Links to Webpages (MOBILE ONLY) -->
+        <div class="mobile links container">
             <nav>
                 <ul>
                     <li><a href="/user/income">My Income</a></li>
@@ -64,6 +81,11 @@
                     <li><a href="/user/summary">Summary</a></li>
                 </ul>
             </nav>
+        </div>
+
+        <!-- FOOTER: About -->
+        <div class="about container">
+            <p>CM2020 Agile Software Projects: <%= app_name %></p>
         </div>
     </footer>
 </body>

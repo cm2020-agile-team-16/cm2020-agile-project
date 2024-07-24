@@ -2,13 +2,20 @@
 * index.js
 * This is your main app entry point
 */
+import express from "express";
+import session from "express-session";
+import bodyParser from "body-parser";
+import sqlite3 from "sqlite3";
+import { open } from "sqlite";
+import { router as accountRouter } from "./routes/account.js";
+import { router as userRouter } from "./routes/user.js";
+
+const __dirname = import.meta.dirname;
 
 // Set up express, bodyparser and EJS
-const express = require('express');
-const session = require('express-session');
 const app = express();
 const port = 3000;
-var bodyParser = require("body-parser");
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs'); // set the app to use ejs for rendering
 app.use(express.static(__dirname + '/public')); // set location of static files
@@ -19,17 +26,12 @@ app.use(session({
 }));
 
 // Set up SQLite
-// Items in the global namespace are accessible throught out the node application
-const sqlite3 = require('sqlite3').verbose();
-global.db = new sqlite3.Database('./database.db',function(err){
-    if(err){
-        console.error(err);
-        process.exit(1); // bail out we can't connect to the DB
-    } else {
-        console.log("Database connected");
-        global.db.run("PRAGMA foreign_keys=ON"); // tell SQLite to pay attention to foreign key constraints
-    }
+const db = await open({
+    filename: "./database.db",
+    driver: sqlite3.Database,
 });
+
+await db.run("PRAGMA foreign_keys=ON");
 
 // Set the app name
 const appName = "BudgetFlow";
@@ -42,19 +44,17 @@ app.use((req, res, next) => {
 
 // Handle requests to the home page 
 app.get('/', (req, res) => {
-    res.render("home.ejs")
+    res.render("home.ejs");
 });
 
-// Add all the route handlers in accountRoutes to the app under the path /account
-const accountRoutes = require('./routes/account');
-app.use('/account', accountRoutes); 
+// Add all the route handlers in accountRouter to the app under the path /account
+app.use('/account', accountRouter); 
 
-// Add all the route handlers in userRoutes to the app under the path /user
-const userRoutes = require('./routes/user');
-app.use('/user', userRoutes); 
+// Add all the route handlers in userRouter to the app under the path /user
+app.use('/user', userRouter); 
 
 
 // Make the web application listen for HTTP requests
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-})
+    console.log(`Example app listening on port ${port}`);
+});

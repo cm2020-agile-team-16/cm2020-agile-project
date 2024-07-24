@@ -77,21 +77,16 @@ router.post('/login', async (req, res, next) => {
         filename: "./database.db",
         driver: sqlite3.Database,
     });
-
-    console.log("in login before query");
-
+    
     // create query to check if an account with that email exists
     const checkEmailQuery = `SELECT * FROM users WHERE email = '${email}'`;
     let user;
     try {
         user = await db.get(checkEmailQuery);
     } catch (error) {
-        console.log("in login in catch");
         next(error); // pass the error to the error handler
         return;
     }
-
-    console.log("in login after catch");
 
     const userExists = !!user;
     if (!userExists) {

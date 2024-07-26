@@ -28,7 +28,7 @@ router.get('/dashboard', async (req, res) => {
     });
 
     // create query to retrieve user's first name
-    const userQuery = `SELECT firstName FROM users WHERE user_id = ${userId}`;
+    const firstNameQuery = `SELECT firstName FROM users WHERE user_id = ${userId}`;
     
     // create query to retrieve user's balance (totalIncome - totalExpenses)
     const balanceQuery = `SELECT (SELECT COALESCE(SUM(amount), 0) FROM income WHERE user_id = ${userId}) - (SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE user_id = ${userId}) AS balance`;
@@ -61,7 +61,7 @@ router.get('/dashboard', async (req, res) => {
     let recentTransactions;
 
     try {
-        firstName = (await db.get(userQuery)).firstName;
+        firstName = (await db.get(firstNameQuery)).firstName;
         balance = (await db.get(balanceQuery)).balance;
         totalIncome = (await db.get(totalIncomeQuery)).totalIncome;
         totalExpenses = (await db.get(totalExpensesQuery)).totalExpenses;

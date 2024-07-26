@@ -101,18 +101,3 @@ a, u {
 .btn:hover {
     transform: scale(1.05);
 }
-
-.message {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.message.positive {
-    color: black;
-}
-
-.message.negative {
-    color: red;
-}

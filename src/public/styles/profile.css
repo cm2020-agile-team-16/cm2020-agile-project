@@ -1,0 +1,54 @@
+/* Specific styles for the profile page */
+
+.profile {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile p {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.profile button {
+    background: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 20px;
+    margin-right: 10px;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.profile button:hover {
+    transform: scale(1.05);
+}
+
+.profile form {
+    margin-top: 20px;
+}
+
+.profile label {
+    display: block;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.profile input {
+    width: calc(100% - 22px);
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+#reset-password-mode img {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-left: 10px;
+}

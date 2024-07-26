@@ -65,6 +65,21 @@ main > div p {
     margin: 10px 0;
 }
 
+.message {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.message.positive {
+    color: black;
+}
+
+.message.negative {
+    color: red;
+}
+
 footer {
     background-color: #333;
     color: white;

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- TAB TITLE -->
+    <title>Profile - <%= app_name %></title>
+    <!-- LINK TO STYLESHEETS / GOOGLE FONTS -->
+    <link rel="stylesheet" href="/styles/general.css">
+    <link rel="stylesheet" href="/styles/profile.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header>
+        <!-- HEADER: Back to Dashboard -->
+        <a href="/user/dashboard"><img src="/assets/images/back.png" alt="back button"></a>
+
+        <!-- HEADER: User Details -->
+        <h2><%= firstName %> <%= lastName %></h2>
+        <img src="/assets/images/pfp.png" alt="profile picture">
+    </header>
+
+    <!-- MAIN -->
+    <main>
+        <!-- MAIN: User Profile -->
+        <section class="profile container">
+            <!-- USER PROFILE: View Mode -->
+            <div id="profile-view-mode">
+                <p>First Name: <%= firstName %></p>
+                <p>Last Name: <%= lastName %></p>
+                <p>Email: <%= email %></p>
+                <p>Password: <i>Edit profile to reset</i></p>
+                <button id="edit-profile-btn">Edit Profile</button>
+            </div>
+
+            <!-- USER PROFILE: Edit Mode -->
+            <form id="profile-edit-mode" action="/account/profile/edit" method="POST" style="display:none;">
+                <div>
+                    <label for="first_name">First Name:</label>
+                    <input type="text" id="profile-first-name" name="firstName" value="<%= firstName %>">
+                </div>
+                <div>
+                    <label for="last_name">Last Name:</label>
+                    <input type="text" id="profile-last-name" name="lastName" value="<%= lastName %>">
+                </div>
+                <div>
+                    <label for="email">Email:</label>
+                    <input type="email" id="profile-email" name="email" value="<%= email %>">
+                </div>
+                <div>
+                    <label for="password">Reset Password</label>
+                    <a href="javascript:void(0);" id="reset-password-btn"><img src="/assets/images/reset.png" alt="reset password"></a>
+                </div>
+                <button type="submit">Save Changes</button>
+                <button type="button" id="cancel-edit-btn">Cancel</button>
+            </form>
+
+            <!-- USER PROFILE: Reset Password Mode -->
+            <form id="reset-password-mode" action="/account/profile/resetPassword" method="POST" style="display:none;">
+                <div>
+                    <label for="current_password">Current Password:</label>
+                    <input type="password" id="current-password" name="currentPassword" required>
+                </div>
+                <div>
+                    <label for="new_password">New Password:</label>
+                    <input type="password" id="new-password" name="newPassword" required>
+                </div>
+                <div>
+                    <label for="confirm_password">Confirm New Password:</label>
+                    <input type="password" id="confirm-password" name="confirmPassword" required>
+                </div>
+                <button type="submit">Reset Password</button>
+                <button type="button" id="cancel-reset-btn">Cancel</button>
+            </form>
+
+            <!-- USER PROFILE: Display Message -->
+            <div id="profile-message">
+                <% if (typeof message !== 'undefined') { %>
+                    <div class="message <%= messageClass %>"><%= message %></div>
+                <% } %>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <!-- FOOTER: About -->
+        <div class="about container">
+            <p>CM2020 Agile Software Projects: <%= app_name %></p>
+        </div>
+    </footer>
+
+    <!-- LINK TO SCRIPTS -->
+    <script src="/scripts/toggleProfileModes.js"></script>
+
+</body>
+</html>

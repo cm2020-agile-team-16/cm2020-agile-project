@@ -9,8 +9,11 @@ import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import { router as accountRouter } from "./routes/account.js";
 import { router as userRouter } from "./routes/user.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const __dirname = import.meta.dirname;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Set up express, bodyparser and EJS
 const app = express();
@@ -18,11 +21,11 @@ const port = 3000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs'); // set the app to use ejs for rendering
-app.use(express.static(__dirname + '/public')); // set location of static files
+app.use(express.static(path.join(__dirname, 'public'))); // set location of static files
 app.use(session({
     secret: 'secret_key',
     resave: false,
-    saveUninitialized: true, // Set to true if using HTTPS
+    saveUninitialized: true, // set to true if using HTTPS
 }));
 
 // Set up SQLite

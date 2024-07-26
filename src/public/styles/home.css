@@ -74,11 +74,15 @@
 }
 
 @media (max-width: 768px) {
-    .intro, .features {
+    .intro {
         padding: 20px;
     }
 
-    .intro h2, .features h3 {
+    .intro h2 {
         font-size: 1.5em;
+    }
+
+    .features {
+        display: none;
     }
 }

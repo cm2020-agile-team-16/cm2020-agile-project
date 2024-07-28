@@ -99,6 +99,13 @@ INSERT INTO expenseCategory (name, description) VALUES ('Entertainment', 'dining
 INSERT INTO expenseCategory (name, description) VALUES ('Personal Care', 'clothing, personal hygiene products, grooming, and beauty services');
 INSERT INTO expenseCategory (name, description) VALUES ('Other', 'other miscellaneous expenses');
 
+-- INSERT INCOME BUDGETS
+INSERT INTO incomeBudget (user_id, income_category_id, amount) VALUES (1, 1, 2000);
+
+-- INSERT EXPENSE BUDGETS
+INSERT INTO expenseBudget (user_id, expense_category_id, amount) VALUES (1, 3, 1000);
+INSERT INTO expenseBudget (user_id, expense_category_id, amount) VALUES (1, 10, 200);
+
 -- INSERT INCOME
 INSERT INTO income (user_id, income_category_id, source, amount) VALUES (1, 1, 'Salary from Company ABC', 2500);
 INSERT INTO income (user_id, income_category_id, source, amount) VALUES (1, 4, 'Rent from Client XYZ', 1000);

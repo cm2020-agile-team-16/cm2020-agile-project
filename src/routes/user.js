@@ -28,16 +28,22 @@ router.get('/dashboard', async (req, res) => {
     });
 
     // create query to retrieve user's first name
-    const firstNameQuery = `SELECT firstName FROM users WHERE user_id = ${userId}`;
+    const firstNameQuery = `SELECT firstName FROM users WHERE user_id = ?`;
     
     // create query to retrieve user's balance (totalIncome - totalExpenses)
-    const balanceQuery = `SELECT (SELECT COALESCE(SUM(amount), 0) FROM income WHERE user_id = ${userId}) - (SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE user_id = ${userId}) AS balance`;
+    const balanceQuery = `SELECT (SELECT COALESCE(SUM(amount), 0) FROM income WHERE user_id = ?) - (SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE user_id = ?) AS balance`;
     
     // create query to retrieve user's total income
-    const totalIncomeQuery = `SELECT COALESCE(SUM(amount), 0) AS totalIncome FROM income WHERE user_id = ${userId}`;
+    const totalIncomeQuery = `SELECT COALESCE(SUM(amount), 0) AS totalIncome FROM income WHERE user_id = ?`;
 
     // create query to retrieve user's total expenses
-    const totalExpensesQuery = `SELECT COALESCE(SUM(amount), 0) AS totalExpenses FROM expenses WHERE user_id = ${userId}`;
+    const totalExpensesQuery = `SELECT COALESCE(SUM(amount), 0) AS totalExpenses FROM expenses WHERE user_id = ?`;
+
+    // create query to retrieve user's budgeted income
+    const budgetedIncomeQuery = `SELECT COALESCE(SUM(amount), 0) AS budgetedIncome FROM incomeBudget WHERE user_id = ?`;
+
+    // create query to retrieve user's budgeted expenses
+    const budgetedExpensesQuery = `SELECT COALESCE(SUM(amount), 0) AS budgetedExpenses FROM expenseBudget WHERE user_id = ?`;
 
     // create query to retrieve user's recent transactions
     const recentTransactionsQuery = `
@@ -45,12 +51,12 @@ router.get('/dashboard', async (req, res) => {
         SELECT 'income' AS type, source, amount, date, IC.name AS category
         FROM income I
         JOIN incomeCategory IC ON I.income_category_id = IC.income_category_id
-        WHERE I.user_id = ${userId}
+        WHERE I.user_id = ?
         UNION
         SELECT 'expense' AS type, source, amount, date, EC.name AS category
         FROM expenses E
         JOIN expenseCategory EC ON E.expense_category_id = EC.expense_category_id
-        WHERE E.user_id = ${userId}
+        WHERE E.user_id = ?
     )
     ORDER BY date DESC LIMIT 3`;
 
@@ -58,14 +64,18 @@ router.get('/dashboard', async (req, res) => {
     let balance;
     let totalIncome;
     let totalExpenses;
+    let budgetedIncome;
+    let budgetedExpenses;
     let recentTransactions;
 
     try {
-        firstName = (await db.get(firstNameQuery)).firstName;
-        balance = (await db.get(balanceQuery)).balance;
-        totalIncome = (await db.get(totalIncomeQuery)).totalIncome;
-        totalExpenses = (await db.get(totalExpensesQuery)).totalExpenses;
-        recentTransactions = await db.all(recentTransactionsQuery);
+        firstName = (await db.get(firstNameQuery, [userId])).firstName;
+        balance = (await db.get(balanceQuery, [userId, userId])).balance;
+        totalIncome = (await db.get(totalIncomeQuery, [userId])).totalIncome;
+        totalExpenses = (await db.get(totalExpensesQuery, [userId])).totalExpenses;
+        budgetedIncome = (await db.get(budgetedIncomeQuery, [userId])).budgetedIncome;
+        budgetedExpenses = (await db.get(budgetedExpensesQuery, [userId])).budgetedExpenses;
+        recentTransactions = await db.all(recentTransactionsQuery, [userId, userId]);
     } catch (error) {
         console.error(error.message);
         return res.sendStatus(500);
@@ -77,6 +87,8 @@ router.get('/dashboard', async (req, res) => {
         balance,
         totalIncome,
         totalExpenses,
+        budgetedIncome,
+        budgetedExpenses,
         recentTransactions
     });
 });

@@ -51,6 +51,10 @@
         <!-- MAIN: Budgets -->
         <section class="budgets container">
             <h2>Budgets</h2>
+            <p>Budget Income: $<%= budgetedIncome %></p>
+            <p>Actual Income: $<%= totalIncome %></p>
+            <p>Budgeted Expenses: $<%= budgetedExpenses %></p>
+            <p>Actual Expenses: $<%= totalExpenses %></p>
         </section>
 
         <!-- MAIN: Recent Transactions -->
@@ -63,8 +67,6 @@
                         <%= transaction.type === 'income' ? 'from' : 'for' %> 
                         <%= transaction.category %> (<%= transaction.source %>) 
                         on <%= new Date(transaction.date).toLocaleDateString() %>
-                        <a href="/user/edit-<%= transaction.type %>?id=<%= transaction.id %>">Edit</a>
-                        <a href="/delete/<%= transaction.type %>/<%= transaction.id %>">Delete</a>
                     </li>
                 <% }) %>
             </ul>

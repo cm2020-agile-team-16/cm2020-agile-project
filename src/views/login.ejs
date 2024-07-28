@@ -7,8 +7,9 @@
     <!-- TAB TITLE -->
     <title>Log In / Register - <%= app_name %></title>
     <!-- LINK TO STYLESHEETS / GOOGLE FONTS -->
-    <link rel="stylesheet" href="/styles/general.css"> 
-    <link rel="stylesheet" href="/styles/login.css"> 
+    <link rel="stylesheet" href="/styles/general.css">
+    <link rel="stylesheet" href="/styles/login.css">
+    <link rel="stylesheet" href="/styles/icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
 </head>
 
@@ -30,10 +31,8 @@
                 <form id="login-form" class="form-content" method="POST" action="/account/login">
                     <h2>Welcome back</h2>
                     <h3>Enter your credentials to login</h3>
-                    <label for="login-email">Email:</label>
-                    <input type="email" id="login-email" name="email" required>
-                    <label for="login-password">Password:</label>
-                    <input type="password" id="login-password" name="password" required>
+                    <input type="email" id="login-email" name="email" class="icon-input icon-email" placeholder="Email" required>
+                    <input type="password" id="login-password" name="password" class="icon-input icon-password" placeholder="Password" required>
                     <button type="submit" class="btn">Log In</button>
                     <% if (typeof message !== 'undefined') { %>
                         <div class="message <%= messageClass %>"><%= message %></div>
@@ -47,16 +46,11 @@
                 <form id="register-form" class="form-content" method="POST" action="/account/register">
                     <h2>Register</h2>
                     <h3>Enter your information below</h3>
-                    <label for="register-first-name">First Name:</label>
-                    <input type="text" id="register-first-name" name="firstName" required>
-                    <label for="register-last-name">Last Name:</label>
-                    <input type="text" id="register-last-name" name="lastName" required>
-                    <label for="register-email">Email:</label>
-                    <input type="email" id="register-email" name="email" required>
-                    <label for="register-password">Password:</label>
-                    <input type="password" id="register-password" name="password" required>
-                    <label for="register-confirm-password">Confirm Password:</label>
-                    <input type="password" id="register-confirm-password" name="confirmPassword" required>
+                    <input type="text" id="register-first-name" name="firstName" class="icon-input icon-user" placeholder="First Name" required>
+                    <input type="text" id="register-last-name" name="lastName" class="icon-input icon-user" placeholder="Last Name" required>
+                    <input type="email" id="register-email" name="email" class="icon-input icon-email" placeholder="Email" required>
+                    <input type="password" id="register-password" name="password" class="icon-input icon-password" placeholder="Password" required>
+                    <input type="password" id="register-confirm-password" name="confirmPassword" class="icon-input icon-password" placeholder="Confirm Password" required>
                     <button type="submit" class="btn">Register</button>
                     <% if (typeof message !== 'undefined') { %>
                         <div class="message <%= messageClass %>"><%= message %></div>

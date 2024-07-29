@@ -17,14 +17,16 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS incomeCategory (
     income_category_id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(255) NOT NULL,
-    description VARCHAR(255)
+    description VARCHAR(255),
+    icon VARCHAR(255)
 );
 
 -- EXPENSE CATEGORY TABLE
 CREATE TABLE IF NOT EXISTS expenseCategory (
     expense_category_id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(255) NOT NULL,
-    description VARCHAR(255)
+    description VARCHAR(255),
+    icon VARCHAR(255)
 );
 
 -- INCOME BUDGET TABLE
@@ -77,41 +79,45 @@ INSERT INTO users (firstName, email, password) VALUES ('user1', 'user1@example.c
 INSERT INTO users (firstName, email, password) VALUES ('user2', 'user2@example.com', '123');
 
 -- INSERT INCOME CATEGORIES
-INSERT INTO incomeCategory (name, description) VALUES ('Salary', 'regular income from employment');
-INSERT INTO incomeCategory (name, description) VALUES ('Freelance', 'earnings from running a business / providing freelance services');
-INSERT INTO incomeCategory (name, description) VALUES ('Investment', 'dividends, interest and capital gains from stocks, bonds and mutual funds');
-INSERT INTO incomeCategory (name, description) VALUES ('Rental Income', 'earnings from leasing out properties');
-INSERT INTO incomeCategory (name, description) VALUES ('Pension', 'retirement income from employer-sponsored pension plans');
-INSERT INTO incomeCategory (name, description) VALUES ('Side Job', 'income from part-time work, seasonal jobs, etc.');
-INSERT INTO incomeCategory (name, description) VALUES ('Other', 'other miscellaneous income');
+INSERT INTO incomeCategory (name, description, icon) VALUES ('Salary', 'regular income from employment', 'fa-briefcase');
+INSERT INTO incomeCategory (name, description, icon) VALUES ('Freelance', 'earnings from running a business / providing freelance services', 'fa-laptop-code');
+INSERT INTO incomeCategory (name, description, icon) VALUES ('Investment', 'dividends, interest and capital gains from stocks, bonds and mutual funds', 'fa-chart-line');
+INSERT INTO incomeCategory (name, description, icon) VALUES ('Rental Income', 'earnings from leasing out properties', 'fa-home');
+INSERT INTO incomeCategory (name, description, icon) VALUES ('Pension', 'retirement income from employer-sponsored pension plans', 'fa-piggy-bank');
+INSERT INTO incomeCategory (name, description, icon) VALUES ('Side Job', 'income from part-time work, seasonal jobs, etc.', 'fa-handshake');
+INSERT INTO incomeCategory (name, description, icon) VALUES ('Other', 'other miscellaneous income', 'fa-ellipsis-h');
 
 -- INSERT EXPENSE CATEGORIES
-INSERT INTO expenseCategory (name, description) VALUES ('Housing', 'rent, mortgage payments, property taxes and home maintenance');
-INSERT INTO expenseCategory (name, description) VALUES ('Utilities', 'electricity, water, gas, internet and phone services');
-INSERT INTO expenseCategory (name, description) VALUES ('Groceries', 'food and household supplies');
-INSERT INTO expenseCategory (name, description) VALUES ('Transportation', 'car payments, fuel, maintenance, public transit fares and insurance');
-INSERT INTO expenseCategory (name, description) VALUES ('Healthcare', 'insurance premiums, medical bills, presciptions and dental care');
-INSERT INTO expenseCategory (name, description) VALUES ('Insurance', 'health, auto, home and life insurance premiums');
-INSERT INTO expenseCategory (name, description) VALUES ('Debt Payments', 'credit card bills, personal loans and student loan payments');
-INSERT INTO expenseCategory (name, description) VALUES ('Savings', 'contributions to savings accounts and retirement funds');
-INSERT INTO expenseCategory (name, description) VALUES ('Investments', 'contributions to investment accounts');
-INSERT INTO expenseCategory (name, description) VALUES ('Entertainment', 'dining out, movies, concerts, subscriptions');
-INSERT INTO expenseCategory (name, description) VALUES ('Personal Care', 'clothing, personal hygiene products, grooming, and beauty services');
-INSERT INTO expenseCategory (name, description) VALUES ('Other', 'other miscellaneous expenses');
+INSERT INTO expenseCategory (name, description, icon) VALUES ('Housing', 'rent, mortgage payments, property taxes and home maintenance', 'fa-home');
+INSERT INTO expenseCategory (name, description, icon) VALUES ('Utilities', 'electricity, water, gas, internet and phone services', 'fa-bolt');
+INSERT INTO expenseCategory (name, description, icon) VALUES ('Groceries', 'food and household supplies', 'fa-shopping-cart');
+INSERT INTO expenseCategory (name, description, icon) VALUES ('Food', 'meals and dining expenses', 'fa-utensils');
+INSERT INTO expenseCategory (name, description, icon) VALUES ('Transportation', 'car payments, fuel, maintenance, public transit fares and insurance', 'fa-car');
+INSERT INTO expenseCategory (name, description, icon) VALUES ('Healthcare', 'insurance premiums, medical bills, prescriptions and dental care', 'fa-medkit');
+INSERT INTO expenseCategory (name, description, icon) VALUES ('Insurance', 'health, auto, home and life insurance premiums', 'fa-shield-alt');
+INSERT INTO expenseCategory (name, description, icon) VALUES ('Debt Payments', 'credit card bills, personal loans and student loan payments', 'fa-credit-card');
+INSERT INTO expenseCategory (name, description, icon) VALUES ('Savings', 'contributions to savings accounts and retirement funds', 'fa-piggy-bank');
+INSERT INTO expenseCategory (name, description, icon) VALUES ('Investments', 'contributions to investment accounts', 'fa-chart-line');
+INSERT INTO expenseCategory (name, description, icon) VALUES ('Entertainment', 'dining out, movies, concerts, subscriptions', 'fa-film');
+INSERT INTO expenseCategory (name, description, icon) VALUES ('Personal Care', 'clothing, personal hygiene products, grooming, and beauty services', 'fa-user');
+INSERT INTO expenseCategory (name, description, icon) VALUES ('Other', 'other miscellaneous expenses', 'fa-ellipsis-h');
 
 -- INSERT INCOME BUDGETS
-INSERT INTO incomeBudget (user_id, income_category_id, amount) VALUES (1, 1, 2000);
+INSERT INTO incomeBudget (user_id, income_category_id, amount) VALUES (1, 1, 2500);
+INSERT INTO incomeBudget (user_id, income_category_id, amount) VALUES (1, 1, 1000);
 
 -- INSERT EXPENSE BUDGETS
+INSERT INTO expenseBudget (user_id, expense_category_id, amount) VALUES (1, 1, 1500);
 INSERT INTO expenseBudget (user_id, expense_category_id, amount) VALUES (1, 3, 1000);
-INSERT INTO expenseBudget (user_id, expense_category_id, amount) VALUES (1, 10, 200);
+INSERT INTO expenseBudget (user_id, expense_category_id, amount) VALUES (1, 4, 500);
 
 -- INSERT INCOME
-INSERT INTO income (user_id, income_category_id, source, amount) VALUES (1, 1, 'Salary from Company ABC', 2500);
-INSERT INTO income (user_id, income_category_id, source, amount) VALUES (1, 4, 'Rent from Client XYZ', 1000);
+INSERT INTO income (user_id, income_category_id, source, amount, date) VALUES (1, 4, 'Client XYZ', 1000, '2024-05-02 00:00:00');
+INSERT INTO income (user_id, income_category_id, source, amount, date) VALUES (1, 1, 'Company ABC', 3000, '2024-05-04 00:00:00');
 
 -- INSERT EXPENSES
-INSERT INTO expenses (user_id, expense_category_id, source, amount) VALUES (1, 3, 'Groceries for May', 800);
-INSERT INTO expenses (user_id, expense_category_id, source, amount) VALUES (1, 10, 'Movie Night', 100);
+INSERT INTO expenses (user_id, expense_category_id, source, amount, date) VALUES (1, 4, 'Cafe 123', 50, '2024-05-01 00:00:00');
+INSERT INTO expenses (user_id, expense_category_id, source, amount, date) VALUES (1, 3, 'Supermarket', 800, '2024-05-03 00:00:00');
+INSERT INTO expenses (user_id, expense_category_id, source, amount, date) VALUES (1, 1, 'Rent', 1500, '2024-05-06 00:00:00');
 
 COMMIT;

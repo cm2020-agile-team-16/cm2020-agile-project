@@ -9,6 +9,15 @@ import { open } from "sqlite";
 
 export const router = express.Router();
 
+// middleware to set headers to prevent caching
+router.use((req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+    next();
+});
+
 /**
  * @desc Renders the user dashboard
  */
@@ -48,17 +57,17 @@ router.get('/dashboard', async (req, res) => {
     // create query to retrieve user's recent transactions
     const recentTransactionsQuery = `
     SELECT * FROM (
-        SELECT 'income' AS type, source, amount, date, IC.name AS category
-        FROM income I
-        JOIN incomeCategory IC ON I.income_category_id = IC.income_category_id
-        WHERE I.user_id = ?
-        UNION
-        SELECT 'expense' AS type, source, amount, date, EC.name AS category
-        FROM expenses E
-        JOIN expenseCategory EC ON E.expense_category_id = EC.expense_category_id
-        WHERE E.user_id = ?
-    )
-    ORDER BY date DESC LIMIT 3`;
+    SELECT 'income' AS type, source, amount, date, IC.name AS category, IC.icon AS icon
+    FROM income I
+    JOIN incomeCategory IC ON I.income_category_id = IC.income_category_id
+    WHERE I.user_id = ?
+    UNION
+    SELECT 'expense' AS type, source, amount, date, EC.name AS category, EC.icon AS icon
+    FROM expenses E
+    JOIN expenseCategory EC ON E.expense_category_id = EC.expense_category_id
+    WHERE E.user_id = ?
+)
+ORDER BY date DESC LIMIT 5`;
 
     let firstName;
     let balance;

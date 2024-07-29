@@ -40,10 +40,19 @@
 }
 
 .transactions li {
-    margin-bottom: 10px;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; 
     align-items: center;
+    padding: 10px; 
+    border-bottom: 1px solid #ccc; 
+}
+
+.transactions li i { 
+margin-right: 10px;
+}
+
+.transactions li .amount { 
+font-weight: bold;
 }
 
 .transactions a {
@@ -54,4 +63,12 @@
 
 .transactions a:hover {
     text-decoration: underline;
+}
+
+.transactions .amount-income {
+    color: green;
+}
+
+.transactions .amount-expense {
+    color: red;
 }

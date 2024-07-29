@@ -9,6 +9,7 @@
     <!-- LINK TO STYLESHEETS / GOOGLE FONTS -->
     <link rel="stylesheet" href="/styles/general.css">
     <link rel="stylesheet" href="/styles/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
 </head>
 
@@ -43,7 +44,7 @@
     <main>
         <!-- MAIN: Balance Card -->
         <section class="balance container">
-            <p>Current Balance: $<%= balance %></p>
+            <p>Balance: $<%= balance.toFixed(2) %></p>
             <p>Total Income: $<%= totalIncome %></p>
             <p>Total Expenses: $<%= totalExpenses %></p>
         </section>
@@ -51,7 +52,7 @@
         <!-- MAIN: Budgets -->
         <section class="budgets container">
             <h2>Budgets</h2>
-            <p>Budget Income: $<%= budgetedIncome %></p>
+            <p>Budgeted Income: $<%= budgetedIncome %></p>
             <p>Actual Income: $<%= totalIncome %></p>
             <p>Budgeted Expenses: $<%= budgetedExpenses %></p>
             <p>Actual Expenses: $<%= totalExpenses %></p>
@@ -63,11 +64,14 @@
             <ul>
                 <% recentTransactions.forEach(function(transaction) { %>
                     <li>
-                        $<%= transaction.amount %> 
-                        <%= transaction.type === 'income' ? 'from' : 'for' %> 
-                        <%= transaction.category %> (<%= transaction.source %>) 
-                        on <%= new Date(transaction.date).toLocaleDateString() %>
-                    </li>
+                        <i class="fa <%= transaction.icon %>"></i>
+                        <span><%= transaction.source %></span>
+                        <span><%= transaction.category %></span>
+                        <span class="amount <%= transaction.type === 'income' ? 'amount-income' : 'amount-expense' %>">
+                          <%= transaction.type === 'income' ? '+' : '-' %>$<%= transaction.amount %>
+                        </span>
+                        <span><%= new Date(transaction.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></span>
+                      </li>
                 <% }) %>
             </ul>
         </section>

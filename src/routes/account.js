@@ -9,6 +9,22 @@ import { open } from "sqlite";
 
 export const router = express.Router();
 
+// Middleware to set headers to prevent caching
+router.use((req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+    next();
+});
+
+// Middleware to require authentication
+const requireAuth = (req, res, next) => {
+    if (!req.session.userId) {
+        return res.redirect('/account/login');
+    }
+    next();
+};
 
 /////////////////////////////////////////////////////////////////
 /////////////////////////// LOGIN.EJS ///////////////////////////

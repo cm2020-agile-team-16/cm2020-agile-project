@@ -1,54 +1,149 @@
 /* Specific styles for the profile page */
 
-.profile {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+body {
+    background-color: rgb(30, 30, 30);
+    font-family: 'Poppins', sans-serif;
+    padding: 0;
+    padding-left: 64px;
+    padding-right: 64px;
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(to bottom right, rgb(14, 158, 168), rgb(122, 215, 89)), rgb(30, 30, 30);
+    background-size: calc(100% - 128px) auto, auto;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
-.profile p {
-    font-size: 1.2em;
-    margin-bottom: 10px;
+#flex {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    form {
+        width: 100%;
+    }
 }
 
-.profile button {
-    background: #007BFF;
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 16px;
+    height: 500px;
+    width: 100%;
+    padding: 0;
+    padding-top: 16px;
     color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
-    font-size: 1em;
+    z-index: 0;
+}
+
+header::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: 100%;
+    height: 50%;
+    top: 0;
+    clip-path: ellipse(60% 50% at top center);
+    background-color: rgb(30, 30, 30);
+}
+
+a#back-btn {
+    position: absolute;
+    top: 32px;
+    left: 32px;
+
+    span {
+        font-size: 48px;
+        color: white;
+    }
+}
+
+span#title-name {
+    font-size: 32pt;
+}
+
+img#profile-picture {
+    margin-top: 100px;
+    width: 200px;
+    height: 200px;
+}
+
+div.content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    color: rgb(60, 60, 60);
+    font-size: 16pt;
+    overflow: hidden;
+}
+
+div.field {
+    display: flex;
+    flex-direction: row;
+    column-gap: 16px;
+    align-items: center;
+    min-height: 128px;
+    padding-left: 48px;
+    padding-right: 48px;
+    border-bottom: 4px solid rgb(30, 30, 30);
+    filter: brightness(1);
+    transition: filter, box-shadow 0.1s ease;
+    user-select: none;
+
+    &:hover:not(:last-of-type) {
+        filter: brightness(1.3);
+        box-shadow: inset 0 0 0 10em rgba(255, 255, 255, 0.2);
+    }
+
+    &:last-of-type {
+        border-bottom: none;
+        justify-content: center;
+    }
+
+    span.icon {
+        color: rgb(60, 60, 60);
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+    }
+
+    label {
+        min-width: 200px;
+    }
+
+    input {
+        font-family: 'Poppins', sans-serif;
+    }
+}
+
+div#reset-password-btn {
     cursor: pointer;
-    margin-top: 20px;
-    margin-right: 10px;
-    transition: background-color 0.3s ease, transform 0.2s;
 }
 
-.profile button:hover {
-    transform: scale(1.05);
+.btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px 8px 16px;
+    background-color: rgb(0, 74, 173);
+    border: none;
+    border-radius: 32px;
+    color: white;
+    width: 128px;
+    cursor: pointer;
+    filter: brightness(1);
+    transition: filter, box-shadow 0.1s ease;
+
+    &:hover {
+        filter: brightness(1.3);
+        box-shadow: inset 0 0 0 10em rgba(255, 255, 255, 0.2);
+    }
 }
 
-.profile form {
-    margin-top: 20px;
-}
-
-.profile label {
-    display: block;
-    font-weight: bold;
-    margin-top: 10px;
-}
-
-.profile input {
-    width: calc(100% - 22px);
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-}
-
-#reset-password-mode img {
-    width: 20px;
-    height: 20px;
-    vertical-align: middle;
-    margin-left: 10px;
+footer {
+    position: absolute;
+    bottom: 0;
 }

@@ -32,10 +32,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // edit profile -> reset password
+    // view profile -> reset password
     if (resetPasswordBtn) {
         resetPasswordBtn.addEventListener('click', function () {
-            profileEdit.style.display = 'none';
+            profileView.style.display = 'none';
             resetPassword.style.display = 'block';
         });
     }

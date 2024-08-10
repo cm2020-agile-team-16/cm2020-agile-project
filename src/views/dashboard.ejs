@@ -7,93 +7,125 @@
     <!-- TAB TITLE -->
     <title>Dashboard - <%= app_name %></title>
     <!-- LINK TO STYLESHEETS / GOOGLE FONTS -->
-    <link rel="stylesheet" href="/styles/general.css">
     <link rel="stylesheet" href="/styles/dashboard.css">
+    <link rel="stylesheet" href="/styles/icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
 </head>
 
 <body>
-    <!-- HEADER -->
     <header>
-        <!-- HEADER: Welcome -->
-        <section class="welcome container">
-            <h2>Welcome back, <%= firstName %></h2>
-        </section>
-
-        <!-- HEADER: Title -->
-        <section class="intro container">
-            <h1>My Dashboard</h1>
-            <a href="/account/profile"><img src="/assets/images/pfp.png" alt="profile picture"></a>
-        </section>
-
-        <!-- HEADER: Links to Webpages (DESKTOP ONLY) -->
-        <section class="desktop links container">
-            <nav>
-                <ul>
-                    <li><a href="/user/income">My Income</a></li>
-                    <li><a href="/user/expense">My Expenses</a></li>
-                    <li><a href="/user/summary">Summary</a></li>
-                    <li><a href="/account/logout">Log Out</a></li>
-                </ul>
-            </nav>
+        <div>
+            <span>Welcome back, <%= firstName %>!</span>
+            <span id="dashboard-header-text">My Dashboard</span>
+        </div>
+        <div class="flex-col" style="align-items: center;">
+            <img id="profile-picture" src="/assets/images/pfp.png" onclick="window.location.href = '/account/profile/'" alt="profile picture">
+            <a href="/account/logout">Sign Out</a>
         </div>
     </header>
-    
-    <!-- MAIN -->
-    <main>
-        <!-- MAIN: Balance Card -->
-        <section class="balance container">
-            <p>Balance: $<%= balance.toFixed(2) %></p>
-            <p>Total Income: $<%= totalIncome %></p>
-            <p>Total Expenses: $<%= totalExpenses %></p>
-        </section>
 
-        <!-- MAIN: Budgets -->
-        <section class="budgets container">
-            <h2>Budgets</h2>
-            <p>Budgeted Income: $<%= budgetedIncome %></p>
-            <p>Actual Income: $<%= totalIncome %></p>
-            <p>Budgeted Expenses: $<%= budgetedExpenses %></p>
-            <p>Actual Expenses: $<%= totalExpenses %></p>
+    <main id="flex">
+        <section id="balance-card">
+            <div class="row flex-col" id="balance">
+                <span class="row">Balance for May 2005 (change this)</span>
+                <span class="row"><%= balance.toLocaleString("en-US", { style: "currency", currency: "USD" }) %></span>
+            </div>
+            <div class="row flex-row">
+                <div class="row flex-col">
+                    <span class="row">Total Income</span>
+                    <span class="row"><%= totalIncome.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }) %></span>
+                </div>
+                <div class="row flex-col">
+                    <span class="row">Total Expenses</span>
+                    <span class="row"><%= totalExpenses.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }) %></span>
+                </div>
+            </div>
         </section>
-
-        <!-- MAIN: Recent Transactions -->
-        <section class="transactions container">
-            <h2>Recent Transactions</h2>
-            <ul>
-                <% recentTransactions.forEach(function(transaction) { %>
-                    <li>
-                        <i class="fa <%= transaction.icon %>"></i>
-                        <span><%= transaction.source %></span>
-                        <span><%= transaction.category %></span>
-                        <span class="amount <%= transaction.type === 'income' ? 'amount-income' : 'amount-expense' %>">
-                          <%= transaction.type === 'income' ? '+' : '-' %>$<%= transaction.amount %>
-                        </span>
-                        <span><%= new Date(transaction.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></span>
-                      </li>
+        <section class="flex-row" id="search">
+            <input class="icon-input icon-search" id="search-bar" placeholder="Search" />
+            <div id="search-filters" onclick="">
+                <span class="icon">tune</span>
+            </div>
+        </section>
+        <section style="width: 100%;">
+            <div class="flex-row" style="justify-content: space-between;">
+                <span>Recent Incomes</span>
+                <div>
+                    <span style="color: rgb(100, 100, 100)">Sort by</span>
+                    <select name="sort-key" class="sort-dropdown">
+                        <option value="latest" selected>Latest</option>
+                        <option value="oldest">Oldest</option>
+                        <option value="amount-desc">Amount (highest first)</option>
+                        <option value="amount-asc">Amount (lowest first)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="transaction-list">
+                <% recentTransactions.filter(t => t.type === "income").forEach(function(transaction) { %>
+                    <div class="transaction">
+                        <i class="fa <%= transaction.icon %> transaction-icon"></i>
+                        <div class="transaction-info">
+                            <div class="transaction-source"><%= transaction.source %></div>
+                            <div class="transaction-date"><%= new Date(transaction.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></div>
+                        </div>
+                        <div><%= transaction.category %></div>
+                        <div class="amount-income">+<%= transaction.amount.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }) %></div>
+                    </div>
                 <% }) %>
-            </ul>
+            </div>
+        </section>
+        <section style="width: 100%;">
+            <div class="flex-row" style="justify-content: space-between;">
+                <span>Recent Expenses</span>
+                <div>
+                    <span style="color: rgb(100, 100, 100)">Sort by</span>
+                    <select name="sort-key" class="sort-dropdown">
+                        <option value="latest" selected>Latest</option>
+                        <option value="oldest">Oldest</option>
+                        <option value="amount-desc">Amount (highest first)</option>
+                        <option value="amount-asc">Amount (lowest first)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="transaction-list">
+                <% recentTransactions.filter(t => t.type === "expense").forEach(function(transaction) { %>
+                    <div class="transaction">
+                        <i class="fa <%= transaction.icon %> transaction-icon"></i>
+                        <div class="transaction-info">
+                            <div class="transaction-source"><%= transaction.source %></div>
+                            <div class="transaction-date"><%= new Date(transaction.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></div>
+                        </div>
+                        <div><%= transaction.category %></div>
+                        <div class="amount-expense">-<%= transaction.amount.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }) %></div>
+                    </div>
+                <% }) %>
+            </div>
         </section>
     </main>
-
-    <!-- FOOTER -->
-    <footer>
-        <!-- FOOTER: Links to Webpages (MOBILE ONLY) -->
-        <div class="mobile links container">
-            <nav>
-                <ul>
-                    <li><a href="/user/income">My Income</a></li>
-                    <li><a href="/user/expense">My Expenses</a></li>
-                    <li><a href="/user/summary">Summary</a></li>
-                </ul>
-            </nav>
+    <div id="navbar">
+        <div class="navbar-button selected" onclick="document.onNavbarButtonClick(0)">
+            <span class="icon">grid_view</span>
+            <span>Dashboard</span>
         </div>
-
-        <!-- FOOTER: About -->
+        <div class="navbar-button" onclick="document.onNavbarButtonClick(1)">
+            <span class="icon">payments</span>
+            <span>My Income</span>
+        </div>
+        <div class="navbar-button" onclick="document.onNavbarButtonClick(2)">
+            <span class="icon">trending_down</span>
+            <span>My Expenses</span>
+        </div>
+        <div class="navbar-button" onclick="document.onNavbarButtonClick(3)">
+            <span class="icon">data_usage</span>
+            <span>Summary</span>
+        </div>
+    </div>
+    <footer>
         <div class="about container">
             <p>CM2020 Agile Software Projects: <%= app_name %></p>
         </div>
     </footer>
+    <script src="/scripts/navbar.js"></script>
 </body>
 </html>

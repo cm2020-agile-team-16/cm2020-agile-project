@@ -33,6 +33,8 @@ const pages = [
 ];
 
 const onTransitionEnded = (index) => {
+    button = selected_button = document.querySelector("div#navbar div.navbar-button.selected");
+    button.removeEventListener(transitionEndedEvent, callbacks[index], false);
     page = pages[index];
     window.location.href = page;
 };
@@ -44,7 +46,6 @@ document.onNavbarButtonClick = (index) => {
     if (selected_index === index) {
         return;
     }
-    selected_button.removeEventListener(transitionEndedEvent, callbacks[selected_index], false);
     selected_index = index;
     button.addEventListener(transitionEndedEvent, callbacks[index], false);
     selected_button.classList.remove("selected");

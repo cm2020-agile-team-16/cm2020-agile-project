@@ -116,8 +116,12 @@ INSERT INTO income (user_id, income_category_id, source, amount, date) VALUES (1
 INSERT INTO income (user_id, income_category_id, source, amount, date) VALUES (1, 1, 'Company ABC', 3000, '2024-05-04 00:00:00');
 
 -- INSERT EXPENSES
+INSERT INTO expenses (user_id, expense_category_id, source, amount, date) VALUES (1, 4, 'YumYum Bar', 25, '2024-04-29 00:00:00');
 INSERT INTO expenses (user_id, expense_category_id, source, amount, date) VALUES (1, 4, 'Cafe 123', 50, '2024-05-01 00:00:00');
 INSERT INTO expenses (user_id, expense_category_id, source, amount, date) VALUES (1, 3, 'Supermarket', 800, '2024-05-03 00:00:00');
 INSERT INTO expenses (user_id, expense_category_id, source, amount, date) VALUES (1, 1, 'Rent', 1500, '2024-05-06 00:00:00');
+INSERT INTO expenses (user_id, expense_category_id, source, amount, date) VALUES (1, 4, 'BBQ Palace', 35, '2024-05-7 00:00:00');
+
+
 
 COMMIT;

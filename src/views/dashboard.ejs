@@ -28,7 +28,7 @@
     <main id="flex">
         <section id="balance-card">
             <div class="row flex-col" id="balance">
-                <span class="row">Balance for May 2005 (change this)</span>
+                <span class="row">Balance for <%= month %> <%= year %></span>
                 <span class="row"><%= balance.toLocaleString("en-US", { style: "currency", currency: "USD" }) %></span>
             </div>
             <div class="row flex-row">
@@ -42,15 +42,14 @@
                 </div>
             </div>
         </section>
-        <section class="flex-row" id="search">
-            <input class="icon-input icon-search" id="search-bar" placeholder="Search" />
-            <div id="search-filters" onclick="">
-                <span class="icon">tune</span>
+        <section id="budget-plans">
+            <div>
+                <span>Budget Plans for <%= month %> <%= year %></span>
             </div>
         </section>
-        <section style="width: 100%;">
+        <section id="recent-transactions">
             <div class="flex-row" style="justify-content: space-between;">
-                <span>Recent Incomes</span>
+                <span>Recent Transactions</span>
                 <div>
                     <span style="color: rgb(100, 100, 100)">Sort by</span>
                     <select name="sort-key" class="sort-dropdown">
@@ -62,42 +61,17 @@
                 </div>
             </div>
             <div class="transaction-list">
-                <% recentTransactions.filter(t => t.type === "income").forEach(function(transaction) { %>
+                <% recentTransactions.forEach(function(transaction) { %>
                     <div class="transaction">
-                        <i class="fa <%= transaction.icon %> transaction-icon"></i>
+                        <div class="transaction-icon">
+                            <i class="fa <%= transaction.icon %>"></i>
+                        </div>
                         <div class="transaction-info">
                             <div class="transaction-source"><%= transaction.source %></div>
-                            <div class="transaction-date"><%= new Date(transaction.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></div>
+                            <div class="transaction-date"><%= new Date(transaction.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) %></div>
                         </div>
-                        <div><%= transaction.category %></div>
-                        <div class="amount-income">+<%= transaction.amount.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }) %></div>
-                    </div>
-                <% }) %>
-            </div>
-        </section>
-        <section style="width: 100%;">
-            <div class="flex-row" style="justify-content: space-between;">
-                <span>Recent Expenses</span>
-                <div>
-                    <span style="color: rgb(100, 100, 100)">Sort by</span>
-                    <select name="sort-key" class="sort-dropdown">
-                        <option value="latest" selected>Latest</option>
-                        <option value="oldest">Oldest</option>
-                        <option value="amount-desc">Amount (highest first)</option>
-                        <option value="amount-asc">Amount (lowest first)</option>
-                    </select>
-                </div>
-            </div>
-            <div class="transaction-list">
-                <% recentTransactions.filter(t => t.type === "expense").forEach(function(transaction) { %>
-                    <div class="transaction">
-                        <i class="fa <%= transaction.icon %> transaction-icon"></i>
-                        <div class="transaction-info">
-                            <div class="transaction-source"><%= transaction.source %></div>
-                            <div class="transaction-date"><%= new Date(transaction.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></div>
-                        </div>
-                        <div><%= transaction.category %></div>
-                        <div class="amount-expense">-<%= transaction.amount.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }) %></div>
+                        <div class="transaction-category"><%= transaction.category %></div>
+                        <div class="<%= transaction.type === "income" ? "amount-income" : "amount-expense" %>"><%= transaction.type === "income" ? "+" : "-" %><%= transaction.amount.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }) %></div>
                     </div>
                 <% }) %>
             </div>

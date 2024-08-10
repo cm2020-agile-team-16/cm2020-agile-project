@@ -38,15 +38,12 @@ router.get('/dashboard', async (req, res) => {
 
     // create query to retrieve user's first name
     const firstNameQuery = `SELECT firstName FROM users WHERE user_id = ?`;
-    
-    // create query to retrieve user's balance (totalIncome - totalExpenses)
-    const balanceQuery = `SELECT (SELECT COALESCE(SUM(amount), 0) FROM income WHERE user_id = ?) - (SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE user_id = ?) AS balance`;
-    
+
     // create query to retrieve user's total income
-    const totalIncomeQuery = `SELECT COALESCE(SUM(amount), 0) AS totalIncome FROM income WHERE user_id = ?`;
+    const totalIncomeQuery = `SELECT COALESCE(SUM(amount), 0) AS totalIncome FROM income WHERE user_id = ? AND substr(date, 1, 4) = ? AND substr(date, 6, 2) = ?`;
 
     // create query to retrieve user's total expenses
-    const totalExpensesQuery = `SELECT COALESCE(SUM(amount), 0) AS totalExpenses FROM expenses WHERE user_id = ?`;
+    const totalExpensesQuery = `SELECT COALESCE(SUM(amount), 0) AS totalExpenses FROM expenses WHERE user_id = ? AND substr(date, 1, 4) = ? AND substr(date, 6, 2) = ?`;
 
     // create query to retrieve user's budgeted income
     const budgetedIncomeQuery = `SELECT COALESCE(SUM(amount), 0) AS budgetedIncome FROM incomeBudget WHERE user_id = ?`;
@@ -67,33 +64,47 @@ router.get('/dashboard', async (req, res) => {
     JOIN expenseCategory EC ON E.expense_category_id = EC.expense_category_id
     WHERE E.user_id = ?
 )
-ORDER BY date DESC LIMIT 5`;
+ORDER BY date DESC LIMIT 10`;
 
+    let recentTransactions;
     let firstName;
     let balance;
     let totalIncome;
     let totalExpenses;
     let budgetedIncome;
     let budgetedExpenses;
-    let recentTransactions;
+
+    let most_recent_date = new Date();
+    let year = most_recent_date.toLocaleString("en-US", { year: "numeric" });
 
     try {
+        recentTransactions = await db.all(recentTransactionsQuery, [userId, userId]);
+        // Determine which month we're in by looking at most recent transaction date
+        if (recentTransactions) {
+            most_recent_date = new Date(recentTransactions[0].date);
+        }
+        const paddedMonth = (most_recent_date.getMonth() + 1).toString().padStart(2, "0");
+        year = most_recent_date.toLocaleString("en-US", { year: "numeric" })
+
         firstName = (await db.get(firstNameQuery, [userId])).firstName;
-        balance = (await db.get(balanceQuery, [userId, userId])).balance;
-        totalIncome = (await db.get(totalIncomeQuery, [userId])).totalIncome;
-        totalExpenses = (await db.get(totalExpensesQuery, [userId])).totalExpenses;
+        totalIncome = (await db.get(totalIncomeQuery, [userId, year, paddedMonth])).totalIncome;
+        totalExpenses = (await db.get(totalExpensesQuery, [userId, year, paddedMonth])).totalExpenses;
+        balance = totalIncome - totalExpenses;
         budgetedIncome = (await db.get(budgetedIncomeQuery, [userId])).budgetedIncome;
         budgetedExpenses = (await db.get(budgetedExpensesQuery, [userId])).budgetedExpenses;
-        recentTransactions = await db.all(recentTransactionsQuery, [userId, userId]);
     } catch (error) {
         console.error(error.message);
         return res.sendStatus(500);
     }
 
+    const month = most_recent_date.toLocaleString("en-US", { month: "long" });
+
     // if there are no errors, load the user's dashboard
     res.render('dashboard', {
         firstName,
         balance,
+        month,
+        year,
         totalIncome,
         totalExpenses,
         budgetedIncome,

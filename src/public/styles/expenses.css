@@ -1,0 +1,339 @@
+/* Specific styles for the dashboard page */
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    row-gap: 16px;
+    background-color: rgb(30, 30, 30);
+    padding: 0;
+    padding-left: 64px;
+    padding-right: 64px;
+    margin: 0;
+    color: white;
+}
+
+main#flex {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1024px;
+    row-gap: 16px;
+    margin-top: 30px;
+}
+
+header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 128px;
+    padding-top: 48px;
+    max-width: 1024px;
+    div {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        span#dashboard-welcome-text {
+            font-size: 1.6em;
+        }
+        span#dashboard-header-text {
+            font-size: 2.5em;
+            font-weight: bold;
+            letter-spacing: .08rem;
+        }
+    }
+}
+
+#welcome {
+    justify-content: flex-end; /* Align text down vertically */
+    align-items: flex-start; /* Align text left horizontally */
+    height: 100%; 
+}
+
+#profile {
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100%; 
+}
+
+img#profile-picture {
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+section#balance-card {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: linear-gradient(to bottom right, rgb(14, 158, 168), rgb(122, 215, 89));
+    width: 100%;
+    row-gap: 16px;
+    justify-content: space-evenly;
+    border-radius: 20px;
+    padding-bottom: 5%;
+    margin-bottom: 8%;
+}
+
+#balance {
+    font-size: 1.5em;
+    width: calc(100% - 24px);
+    text-wrap: nowrap;
+}
+
+section#budget-plans {
+    display: flex;
+    flex-direction: column;
+    flex: 2;
+    width: 100%;
+    margin: 2% 0;
+}
+
+canvas {
+    margin-bottom: 8%;
+}
+
+section#recent-transactions {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+    margin: 2% 0;
+}
+
+.row {
+    width: 38%;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    column-gap: 16px;
+    width: 100%;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 5% 0 0 8%;
+    span#balance-text {
+        font-size: 1em;
+    }
+    span#balance-amount {
+        font-size: 2.2em;
+    }
+    span#text {
+        font-size: 1.25em; 
+    }
+    span#amount {
+        font-size: 2em;
+    }
+}
+
+#section-title {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+#sort {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+select.sort-dropdown {
+    background-color: rgb(30, 30, 30);
+    color: white;
+    font-size: 1em;
+    border: 0;
+    text-align: left;
+}
+
+:root {
+    --transaction-height: 60px;
+    --transaction-border: 2px;
+    --transaction-padding: 16px;
+}
+
+.transaction-list {
+    display: flex;
+    flex-direction: column;
+    height: calc(((var(--transaction-height) - (2 * var(--transaction-border))) + var(--transaction-padding)) * 2);
+    min-height: 350px;
+    padding-top: 24px;
+    padding-right: 16px;
+    row-gap: 16px;
+    overflow-y: scroll;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: rgb(100, 100, 100);
+    margin: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: white;
+}
+
+.transaction {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: var(--transaction-height);
+    border-bottom: var(--transaction-border) solid rgb(100, 100, 100);
+    padding-bottom: var(--transaction-padding);
+    &:last-of-type {
+        border-bottom: 0;
+        padding-bottom: 0;
+    }
+}
+
+.transaction-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+}
+
+.transaction-source {
+    font-size: 16pt;
+}
+
+.transaction-date {
+    color: rgb(100, 100, 100);
+}
+
+.transaction-category {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+}
+
+.transaction-icon {
+    display: flex !important;
+    flex: 1;
+    align-items: center;
+    justify-content: flex-start;
+    i {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background-color: rgb(59, 59, 59);
+    }
+}
+
+.amount-income {
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+    color: rgb(63, 236, 63);
+}
+
+.amount-expense {
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+    color: rgb(252, 51, 51);
+}
+
+#navbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 1.5em;
+    user-select: none;
+    width: 100%;
+    height: 80px;
+    max-width: 1024px;
+    border-radius: 35px;
+    border: 0;
+    background: linear-gradient(to bottom right, rgb(14, 158, 168), rgb(122, 215, 89));
+    margin: 5% 0;
+}
+
+.navbar-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+    height: 100%;
+    transition: flex 500ms ease;
+    white-space: nowrap;
+    overflow-x: hidden;
+    &.selected {
+        flex: 4;
+        justify-content: center;
+        border-radius: 35px;
+        column-gap: 16px;
+        filter: brightness(1.1);
+        background: linear-gradient(to bottom right, rgb(14, 158, 168), rgb(122, 215, 89));
+    }
+    &:not(.selected) {
+        flex: 1;
+        justify-content: center;
+        span:nth-of-type(2) {
+            display: none;
+            visibility: hidden;
+        }
+    }
+    
+}
+
+input#search-bar {
+    width: 100%;
+    height: 48px;
+    color: white;
+    background-color: rgb(40, 40, 40);
+    background-position: calc(100% - 16px) 50%;
+    padding-left: 24px;
+    outline: none;
+    box-shadow: none;
+    border: 0;
+}
+
+#search-filters {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(59, 59, 59);
+    width: 48px;
+    height: 48px;
+    user-select: none;
+    cursor: pointer;
+    transition: filter 100ms ease;
+    span {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        font-size: 32px;
+    }
+    &:hover {
+        filter: brightness(1.2);
+    }
+    &:active {
+        filter: brightness(0.8);
+    }
+}

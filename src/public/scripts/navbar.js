@@ -28,7 +28,7 @@ const callbacks = [
 const pages = [
     "/user/dashboard",
     "/user/income",
-    "/user/expense",
+    "/user/expenses",
     "/user/summary"
 ];
 

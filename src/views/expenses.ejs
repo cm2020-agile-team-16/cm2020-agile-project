@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- TAB TITLE -->
+    <title>Dashboard - <%= app_name %></title>
+    <!-- LINK TO STYLESHEETS / GOOGLE FONTS -->
+    <link rel="stylesheet" href="/styles/expenses.css">
+    <link rel="stylesheet" href="/styles/icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <div id="welcome">
+            <span id="dashboard-header-text">My Expenses</span>
+        </div>
+        <div id="profile">
+            <img id="profile-picture" src="/assets/images/pfp.png" onclick="window.location.href = '/account/profile/'" alt="profile picture">
+            <a href="/account/logout">Sign Out</a>
+        </div>
+    </header>
+
+    <main id="flex">
+        <section id="category-breakdown-graph"></section>
+        <section id="total-expenses-graph"></section>
+        <section class="flex-row" id="search">
+            <input class="icon-input icon-search" id="search-bar" placeholder="Search" />
+            <div id="search-filters" onclick="">
+                <span class="icon">tune</span>
+            </div>
+        </section>
+        <section id="recent-transactions">
+            <div class="flex-row" style="justify-content: space-between;">
+                <span id="section-title">Expenses for <%= month %> <%= year %></span>
+                <div id="sort">
+                    <span style="color: rgb(100, 100, 100)">Sort by</span>
+                    <select name="sort-key" class="sort-dropdown">
+                        <option value="latest" selected>Latest</option>
+                        <option value="oldest">Oldest</option>
+                        <option value="amount-desc">High-Low</option>
+                        <option value="amount-asc">Low-High</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="transaction-list">
+                <% monthlyExpenses.forEach(function(transaction) { %>
+                    <div class="transaction">
+                        <div class="transaction-icon">
+                            <i class="fa <%= transaction.icon %>"></i>
+                        </div>
+                        <div class="transaction-info">
+                            <div class="transaction-source"><%= transaction.source %></div>
+                            <div class="transaction-date"><%= new Date(transaction.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) %></div>
+                        </div>
+                        <div class="transaction-category"><%= transaction.category %></div>
+                        <div class="<%= transaction.type === "income" ? "amount-income" : "amount-expense" %>"><%= transaction.type === "income" ? "+" : "-" %><%= transaction.amount.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }) %></div>
+                    </div>
+                <% }) %>
+            </div>
+        </section>
+
+        <div id="navbar">
+            <div class="navbar-button selected" onclick="document.onNavbarButtonClick(0)">
+                <span class="icon">grid_view</span>
+                <span>Dashboard</span>
+            </div>
+            <div class="navbar-button" onclick="document.onNavbarButtonClick(1)">
+                <span class="icon">payments</span>
+                <span>My Income</span>
+            </div>
+            <div class="navbar-button" onclick="document.onNavbarButtonClick(2)">
+                <span class="icon">trending_down</span>
+                <span>My Expenses</span>
+            </div>
+            <div class="navbar-button" onclick="document.onNavbarButtonClick(3)">
+                <span class="icon">data_usage</span>
+                <span>Summary</span>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="about container">
+            <p>CM2020 Agile Software Projects: <%= app_name %></p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/scripts/dashboardCharts.js"></script>
+    <script src="/scripts/navbar.js"></script>
+
+</body>
+</html>

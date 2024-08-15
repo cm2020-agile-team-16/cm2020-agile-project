@@ -196,9 +196,14 @@ router.get('/expenses', async (req, res) => {
         driver: sqlite3.Database,
     });
 
+    const totalIncomeQuery = `SELECT COALESCE(SUM(amount), 0) AS totalIncome FROM income WHERE user_id = ? AND substr(date, 1, 4) = ? AND substr(date, 6, 2) = ?`;
+
     const totalExpensesQuery = `SELECT COALESCE(SUM(amount), 0) AS totalExpenses FROM expenses WHERE user_id = ? AND substr(date, 1, 4) = ? AND substr(date, 6, 2) = ?`;
 
     const budgetedExpensesQuery = `SELECT COALESCE(SUM(amount), 0) AS budgetedExpenses FROM expenseBudget WHERE user_id = ?`;
+
+    // create query to retrieve user's budgeted income
+    const budgetedIncomeQuery = `SELECT COALESCE(SUM(amount), 0) AS budgetedIncome FROM incomeBudget WHERE user_id = ?`;
 
     const recentTransactionsQuery = `
     SELECT * FROM (
@@ -217,6 +222,8 @@ ORDER BY date DESC LIMIT 10`;
     let recentTransactions;
     let totalExpenses;
     let budgetedExpenses;
+    let totalIncome;
+    let budgetedIncome;
 
     let most_recent_date = new Date();
     let year = most_recent_date.toLocaleString("en-US", { year: "numeric" });
@@ -228,9 +235,10 @@ ORDER BY date DESC LIMIT 10`;
             most_recent_date = new Date(recentTransactions[0].date);
         }
         const paddedMonth = (most_recent_date.getMonth() + 1).toString().padStart(2, "0");
-        year = most_recent_date.toLocaleString("en-US", { year: "numeric" })
-
+        year = most_recent_date.toLocaleString("en-US", { year: "numeric" });
+        totalIncome = (await db.get(totalIncomeQuery, [userId, year, paddedMonth])).totalIncome;
         totalExpenses = (await db.get(totalExpensesQuery, [userId, year, paddedMonth])).totalExpenses;
+        budgetedIncome = (await db.get(budgetedIncomeQuery, [userId])).budgetedIncome;
         budgetedExpenses = (await db.get(budgetedExpensesQuery, [userId])).budgetedExpenses;
     } catch (error) {
         console.error(error.message);
@@ -249,7 +257,9 @@ ORDER BY date DESC LIMIT 10`;
 
     res.render('expenses', {
         budgetedExpenses,
+        budgetedIncome,
         totalExpenses,
+        totalIncome,
         year,
         month,
         monthlyExpenses

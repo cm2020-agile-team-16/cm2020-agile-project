@@ -27,6 +27,21 @@
     <main id="flex">
         <section id="category-breakdown-graph"></section>
         <section id="total-expenses-graph"></section>
+
+        <section id="budget-plans">
+            <div>
+                <span id="section-title">Budget Plans for <b><%= month %> <%= year %></b></span>
+                <canvas id="incomeChart" width="1000" height="200"></canvas>
+                <canvas id="expensesChart" width="1000" height="200"></canvas>
+                <div id="data"
+                    data-budgeted-income="<%= budgetedIncome %>"
+                    data-total-income="<%= totalIncome %>"
+                    data-budgeted-expenses="<%= budgetedExpenses %>"
+                    data-total-expenses="<%= totalExpenses %>">
+                </div>
+            </div>
+        </section>
+        
         <section class="flex-row" id="search">
             <input class="icon-input icon-search" id="search-bar" placeholder="Search" />
             <div id="search-filters" onclick="">

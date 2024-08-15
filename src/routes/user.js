@@ -63,8 +63,8 @@ router.get('/dashboard', async (req, res) => {
     FROM expenses E
     JOIN expenseCategory EC ON E.expense_category_id = EC.expense_category_id
     WHERE E.user_id = ?
-)
-ORDER BY date DESC LIMIT 10`;
+    )
+    ORDER BY date DESC LIMIT 10`;
 
     let recentTransactions;
     let firstName;

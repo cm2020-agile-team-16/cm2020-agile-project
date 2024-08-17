@@ -19,7 +19,6 @@ CREATE TABLE IF NOT EXISTS incomeCategory (
     name VARCHAR(255) NOT NULL,
     description VARCHAR(255),
     icon VARCHAR(255),
-    promote_tips VARCHAR(255),
     under_budget_tips VARCHAR(255)
 );
 
@@ -29,7 +28,6 @@ CREATE TABLE IF NOT EXISTS expenseCategory (
     name VARCHAR(255) NOT NULL,
     description VARCHAR(255),
     icon VARCHAR(255),
-    reduce_expense_tips VARCHAR(255),
     over_budget_tips VARCHAR(255)
 );
 
@@ -86,97 +84,93 @@ CREATE TABLE IF NOT EXISTS expenses (
 INSERT INTO users (firstName, lastName, email, password) VALUES ('user', 'example', 'user@example.com', 'abc');
 
 -- INSERT INCOME CATEGORIES
-INSERT INTO incomeCategory (name, description, icon, promote_tips, under_budget_tips) VALUES 
+INSERT INTO incomeCategory (name, description, icon, under_budget_tips) VALUES 
 ('Salary', 'regular income from employment', 'fa-briefcase', 
- 'Consider asking for a raise or taking on extra shifts.', 
- 'Review your current job market to explore other opportunities.'),
+ 'Consider acquiring new certifications or skills that are in demand in your industry to enhance your value and bargaining power.'),
 
 ('Freelance', 'earnings from running a business / providing freelance services', 'fa-laptop-code', 
- 'Expand your client base through networking or marketing.', 
- 'Offer discounts or packages to attract more clients.'),
+ 'Leverage online platforms to showcase your portfolio and gain new clients. Consider offering a referral discount to encourage existing clients to bring in new business.'),
 
 ('Investment', 'dividends, interest and capital gains from stocks, bonds and mutual funds', 'fa-chart-line', 
- 'Diversify your portfolio to increase income streams.', 
- 'Consider rebalancing your investments to align with your goals.'),
+ 'Explore dividend reinvestment plans (DRIPs) to automatically reinvest your dividends, potentially increasing your returns over time.'),
 
 ('Rental Income', 'earnings from leasing out properties', 'fa-home', 
- 'Explore short-term rental platforms to maximize income.', 
- 'Review rental agreements and adjust rates if necessary.'),
+ 'Regularly review local rental markets to ensure your pricing is competitive. Consider offering short-term leases for higher income during peak seasons.'),
 
 ('Pension', 'retirement income from employer-sponsored pension plans', 'fa-piggy-bank', 
- 'Consider additional retirement savings or part-time work.', 
- 'Review your retirement plan contributions and options.'),
+ 'Look into annuity options that can provide a stable income stream during retirement. Consider delaying withdrawals to maximize benefits.'),
 
 ('Side Job', 'income from part-time work, seasonal jobs, etc.', 'fa-handshake', 
- 'Look for high-demand side gigs or seasonal opportunities.', 
- 'Re-evaluate the time spent on side jobs for better income.'),
+ 'Identify and focus on gigs that offer repeat business or ongoing contracts to create a more stable income stream.'),
 
 ('Other', 'other miscellaneous income', 'fa-ellipsis-h', 
- 'Identify and explore additional income sources.', 
- 'Consider tracking irregular income sources more carefully.');
+ 'Explore passive income opportunities such as creating digital products or content that can generate ongoing revenue with minimal maintenance.');
 
 -- INSERT EXPENSE CATEGORIES
-INSERT INTO expenseCategory (name, description, icon, reduce_expense_tips, over_budget_tips) VALUES 
+INSERT INTO expenseCategory (name, description, icon, over_budget_tips) VALUES 
 ('Housing', 'rent, mortgage payments, property taxes and home maintenance', 'fa-home', 
- 'Consider refinancing or moving to a more affordable location.', 
- 'Review utility usage and maintenance costs for potential savings.'),
+ 'Consider investigating local housing assistance programs or subsidies.'),
 
 ('Utilities', 'electricity, water, gas, internet and phone services', 'fa-bolt', 
- 'Reduce energy usage and consider switching providers.', 
- 'Examine utility bills for unnecessary charges.'),
+ 'Reduce energy usage by installing energy-efficient appliances and examine utility bills for unnecessary charges.'),
 
 ('Groceries', 'food and household supplies', 'fa-shopping-cart', 
- 'Plan meals and buy in bulk to save money.', 
- 'Avoid impulse purchases and use a shopping list.'),
+ 'Use cashback apps and coupons for groceries. Avoid impulse purchases and use a shopping list.'),
 
 ('Food', 'meals and dining expenses', 'fa-utensils', 
- 'Cook at home more often and reduce dining out.', 
- 'Look for discounts or meal plans that fit your budget.'),
+ 'Cook at home more often and reduce dining out. Set a weekly dining budget and stick to it by planning meals ahead.'),
 
 ('Transportation', 'car payments, fuel, maintenance, public transit fares and insurance', 'fa-car', 
- 'Use public transit or carpool to reduce costs.', 
- 'Maintain your vehicle regularly to avoid costly repairs.'),
+ 'Use public transit or carpool to reduce costs. Maintain your vehicle regularly to avoid costly repairs.'),
 
 ('Healthcare', 'insurance premiums, medical bills, prescriptions and dental care', 'fa-medkit', 
- 'Compare healthcare plans and services for better rates.', 
- 'Take preventive measures to avoid costly medical expenses.'),
+ 'Compare healthcare plans and services for better rates. Take preventive measures to avoid costly medical expenses.'),
 
 ('Insurance', 'health, auto, home and life insurance premiums', 'fa-shield-alt', 
- 'Shop around for better insurance rates.', 
- 'Review and adjust your coverage to avoid over-insurance.'),
+ 'Review and adjust your coverage to avoid over-insurance, such as bundling multiple insurance policies to save on premiums.'),
 
 ('Debt Payments', 'credit card bills, personal loans and student loan payments', 'fa-credit-card', 
- 'Consider debt consolidation to reduce interest rates.', 
- 'Prioritize paying off high-interest debt first.'),
+ 'Think twice before making purchases on credit. Prioritize paying off high-interest debt first.'),
 
 ('Savings', 'contributions to savings accounts and retirement funds', 'fa-piggy-bank', 
- 'Automate savings contributions to stay on track.', 
- 'Review your savings goals and adjust if necessary.'),
+ 'Automate savings contributions to stay on track. Switch to a high-yield savings account for better returns.'),
 
 ('Investments', 'contributions to investment accounts', 'fa-chart-line', 
- 'Set up automatic contributions to investment accounts.', 
- 'Rebalance your portfolio to stay aligned with your goals.'),
+ 'Set up automatic contributions to investment accounts and invest in low-cost index funds to minimize fees.'),
 
 ('Entertainment', 'dining out, movies, concerts, subscriptions', 'fa-film', 
- 'Look for free or low-cost entertainment options.', 
- 'Limit subscriptions and unnecessary entertainment expenses.'),
+ 'Look for free or low-cost entertainment options. Limit subscriptions and unnecessary entertainment expenses.'),
 
 ('Personal Care', 'clothing, personal hygiene products, grooming, and beauty services', 'fa-user', 
- 'Consider DIY options for grooming and beauty.', 
- 'Shop for clothing and personal care items during sales.'),
+ 'Prioritize necessary items and delay non-essential purchases. Shop for clothing and personal care items during sales.'),
 
 ('Other', 'other miscellaneous expenses', 'fa-ellipsis-h', 
- 'Identify and eliminate unnecessary miscellaneous expenses.', 
- 'Review and categorize your miscellaneous expenses regularly.');
+ 'Identify and eliminate unnecessary miscellaneous expenses. Review and categorize these expenses regularly.');
 
 -- INSERT INCOME BUDGETS
-INSERT INTO incomeBudget (user_id, income_category_id, amount, month) VALUES (1, 1, 2500, '2024-05');
-INSERT INTO incomeBudget (user_id, income_category_id, amount, month) VALUES (1, 4, 1000, '2024-05');
+-- > MAY
+INSERT INTO incomeBudget (user_id, income_category_id, amount, month) VALUES (1, 1, 3500, '2024-05');
+INSERT INTO incomeBudget (user_id, income_category_id, amount, month) VALUES (1, 4, 1500, '2024-05');
+-- > JUNE
+INSERT INTO incomeBudget (user_id, income_category_id, amount, month) VALUES (1, 1, 3500, '2024-06');
+INSERT INTO incomeBudget (user_id, income_category_id, amount, month) VALUES (1, 4, 1500, '2024-06');
+-- > JULY
+INSERT INTO incomeBudget (user_id, income_category_id, amount, month) VALUES (1, 1, 3500, '2024-07');
+INSERT INTO incomeBudget (user_id, income_category_id, amount, month) VALUES (1, 4, 1500, '2024-07');
 
 -- INSERT EXPENSE BUDGETS
+-- > MAY
 INSERT INTO expenseBudget (user_id, expense_category_id, amount, month) VALUES (1, 1, 1500, '2024-05');
 INSERT INTO expenseBudget (user_id, expense_category_id, amount, month) VALUES (1, 3, 1000, '2024-05');
 INSERT INTO expenseBudget (user_id, expense_category_id, amount, month) VALUES (1, 4, 500, '2024-05');
+-- > JUNE
+INSERT INTO expenseBudget (user_id, expense_category_id, amount, month) VALUES (1, 1, 1500, '2024-06');
+INSERT INTO expenseBudget (user_id, expense_category_id, amount, month) VALUES (1, 3, 1000, '2024-06');
+INSERT INTO expenseBudget (user_id, expense_category_id, amount, month) VALUES (1, 4, 500, '2024-06');
+-- > JULY
+INSERT INTO expenseBudget (user_id, expense_category_id, amount, month) VALUES (1, 1, 1500, '2024-07');
+INSERT INTO expenseBudget (user_id, expense_category_id, amount, month) VALUES (1, 3, 1000, '2024-07');
+INSERT INTO expenseBudget (user_id, expense_category_id, amount, month) VALUES (1, 4, 500, '2024-07');
 
 -- INSERT INCOME
 -- > MAY

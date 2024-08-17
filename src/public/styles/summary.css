@@ -1,0 +1,166 @@
+/* Specific styles for the summary page */
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    row-gap: 16px;
+    background-color: rgb(30, 30, 30);
+    padding: 0;
+    padding-left: 64px;
+    padding-right: 64px;
+    margin: 0;
+    color: white;
+}
+
+main#flex {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1024px;
+    row-gap: 16px;
+    margin-top: 30px;
+}
+
+header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 128px;
+    padding-top: 48px;
+    max-width: 1024px;
+    div {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        span#dashboard-welcome-text {
+            font-size: 1.6em;
+        }
+        span#dashboard-header-text {
+            font-size: 2.5em;
+            font-weight: bold;
+            letter-spacing: .08rem;
+        }
+    }
+}
+
+#welcome {
+    justify-content: flex-end; /* Align text down vertically */
+    align-items: flex-start; /* Align text left horizontally */
+    height: 100%; 
+}
+
+#profile {
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100%; 
+}
+
+img#profile-picture {
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+section#budget-plans {
+    display: flex;
+    flex-direction: column;
+    flex: 2;
+    width: 100%;
+    margin: 2% 0;
+}
+
+canvas {
+    margin-bottom: 8%;
+}
+
+.row {
+    width: 38%;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    column-gap: 16px;
+    width: 100%;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 5% 0 0 8%;
+    span#balance-text {
+        font-size: 1em;
+    }
+    span#balance-amount {
+        font-size: 2.2em;
+    }
+    span#text {
+        font-size: 1.25em; 
+    }
+    span#amount {
+        font-size: 2em;
+    }
+}
+
+#section-title {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+#navbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 1.5em;
+    user-select: none;
+    width: 100%;
+    height: 80px;
+    max-width: 1024px;
+    border-radius: 35px;
+    border: 0;
+    background: linear-gradient(to bottom right, rgb(14, 158, 168), rgb(122, 215, 89));
+    margin: 5% 0;
+}
+
+.navbar-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+    height: 100%;
+    transition: flex 500ms ease;
+    white-space: nowrap;
+    overflow-x: hidden;
+    &.selected {
+        flex: 4;
+        justify-content: center;
+        border-radius: 35px;
+        column-gap: 16px;
+        filter: brightness(1.1);
+        background: linear-gradient(to bottom right, rgb(14, 158, 168), rgb(122, 215, 89));
+    }
+    &:not(.selected) {
+        flex: 1;
+        justify-content: center;
+        span:nth-of-type(2) {
+            display: none;
+            visibility: hidden;
+        }
+    }
+    
+}

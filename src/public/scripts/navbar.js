@@ -19,7 +19,7 @@ transitionEndedEvent = getTransitionEndedEventName();
 const pages = [
     "/user/dashboard",
     "/user/income",
-    "/user/expense",
+    "/user/expenses",
     "/user/summary"
 ];
 
@@ -36,12 +36,12 @@ const callbacks = [
     () => onTransitionEnded(3),
 ];
 
-const pages = [
-    "/user/dashboard",
-    "/user/income",
-    "/user/expenses",
-    "/user/summary"
-];
+// const pages = [
+//     "/user/dashboard",
+//     "/user/income",
+//     "/user/expenses",
+//     "/user/summary"
+// ];
 
 const onTransitionEnded = (index) => {
     button = selected_button = document.querySelector("div#navbar div.navbar-button.selected");

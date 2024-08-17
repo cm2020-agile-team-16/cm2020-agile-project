@@ -16,20 +16,24 @@ const getTransitionEndedEventName = () => {
 
 transitionEndedEvent = getTransitionEndedEventName();
 
-let selected_index = 0;
+const pages = [
+    "/user/dashboard",
+    "/user/income",
+    "/user/expense",
+    "/user/summary"
+];
+
+const get_selected_index = () => {
+    return pages.findIndex(p => p === window.location.pathname);
+};
+
+let selected_index = get_selected_index();
 
 const callbacks = [
     () => onTransitionEnded(0),
     () => onTransitionEnded(1),
     () => onTransitionEnded(2),
     () => onTransitionEnded(3),
-];
-
-const pages = [
-    "/user/dashboard",
-    "/user/income",
-    "/user/expense",
-    "/user/summary"
 ];
 
 const onTransitionEnded = (index) => {

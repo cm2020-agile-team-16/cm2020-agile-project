@@ -26,10 +26,29 @@
 
     <main id="flex">
 
-        <section id="income-categories-chart">
+        <section id="income-categories-chart-section">
+            <span id="section-title">Income Categories for <b><%= month %> <%= year %></b></span>
+            <canvas id="income-categories-chart" width="1000" height="200"></canvas>
+            <div class="data"
+                data-budgeted-income="<%= budgetedIncome %>"
+                data-total-income="<%= totalIncome %>"
+            >
+                <div>
+                    <%= JSON.stringify(incomes) %>
+                </div>
+                <div>
+                    <%= JSON.stringify(incomeCategories) %>
+                </div>
+            </div>
         </section>
 
-        <section id="income-chart">
+        <section id="income-chart-section">
+            <canvas id="income-chart" width="1000" height="200"></canvas>
+            <div class="data"
+                data-budgeted-income="<%= budgetedIncome %>"
+                data-total-income="<%= totalIncome %>"
+            >
+            </div>
         </section>
 
         <section class="flex-row" id="search">
@@ -97,6 +116,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/scripts/incomeCharts.js"></script>
     <script src="/scripts/navbar.js"></script>
 
 </body>

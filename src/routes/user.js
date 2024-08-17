@@ -147,9 +147,12 @@ router.get('/income', async (req, res) => {
     )
     ORDER BY date DESC`;
 
+    const incomeCategoriesQuery = `SELECT name FROM incomeCategory`;
+
     let incomes;
     let totalIncome;
     let budgetedIncome;
+    let incomeCategories;
 
     let most_recent_date = new Date();
     let year = most_recent_date.toLocaleString("en-US", { year: "numeric" });
@@ -165,6 +168,7 @@ router.get('/income', async (req, res) => {
 
         totalIncome = (await db.get(totalIncomeQuery, [userId, year, paddedMonth])).totalIncome;
         budgetedIncome = (await db.get(budgetedIncomeQuery, [userId])).budgetedIncome;
+        incomeCategories = (await db.all(incomeCategoriesQuery))
     } catch (error) {
         console.error(error.message);
         return res.sendStatus(500);
@@ -178,7 +182,8 @@ router.get('/income', async (req, res) => {
         year,
         totalIncome,
         budgetedIncome,
-        incomes
+        incomes,
+        incomeCategories,
     });
 });
 

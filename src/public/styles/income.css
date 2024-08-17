@@ -75,6 +75,15 @@ a {
     text-decoration: none;
 }
 
+section {
+    div.data {
+        width: 0;
+        height: 0;
+        visibility: hidden;
+        display: none;
+    }
+}
+
 section#balance-card {
     display: flex;
     flex-direction: column;
@@ -297,7 +306,6 @@ select.sort-dropdown {
         }
     }
 }
-
 
 input#search-bar {
     width: 100%;

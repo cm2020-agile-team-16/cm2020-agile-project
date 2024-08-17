@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- TAB TITLE -->
+    <title>Summary - <%= app_name %></title>
+    <!-- LINK TO STYLESHEETS / GOOGLE FONTS -->
+    <link rel="stylesheet" href="/styles/summary.css">
+    <link rel="stylesheet" href="/styles/icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <div id="welcome">
+            <span id="dashboard-header-text">Summary</span>
+        </div>
+        <div id="profile">
+            <img id="profile-picture" src="/assets/images/pfp.png" onclick="window.location.href = '/account/profile/'" alt="profile picture">
+            <a href="/account/logout">Sign Out</a>
+        </div>
+    </header>
+
+    <main id="flex">
+
+        <!-- Financial Health Section -->
+        <section id="financial-health">
+            <div>
+                <span id="section-title">Overall Financial Health</span>
+                <div id="balances">
+                    <h4>Balances of Last 3 Months</h4>
+                    <ul>
+                        <% last3Balances.forEach(function(balance) { %>
+                            <li><%= balance.month %>: $<%= balance.balance %></li>
+                        <% }) %>
+                    </ul>
+                </div>
+                <div id="savings-rates">
+                    <h4>Savings Rates of Last 3 Months</h4>
+                    <ul>
+                        <% last3SavingsRates.forEach(function(savingsRate) { %>
+                            <li><%= savingsRate.month %>: <%= savingsRate.savingsRate %>%</li>
+                        <% }) %>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Financial Snapshot Section -->
+        <section id="financial-snapshot">
+            <div>
+                <span id="section-title">Monthly Financial Snapshot</span>
+                <div id="income-hotspots">
+                    <h4>Income Hotspots</h4>
+                    <ul>
+                        <% topIncomeCategories.forEach(function(incomeCategory) { %>
+                            <li><b>Category:</b> <%= incomeCategory.categoryName %></li>
+                            <li><b>Amount:</b> $<%= incomeCategory.totalAmount %></li>
+                            <li><b>Tips:</b> <%= incomeCategory.tips %></li>
+                            <br>
+                        <% }) %>
+                    </ul>
+                </div>
+                <div id="expense-hotspots">
+                    <h4>Expense Hotspots</h4>
+                    <ul>
+                        <% topExpenseCategories.forEach(function(expenseCategory) { %>
+                            <li><b>Category:</b> <%= expenseCategory.categoryName %></li>
+                            <li><b>Amount:</b> $<%= expenseCategory.totalAmount %></li>
+                            <li><b>Tips:</b> <%= expenseCategory.tips %></li>
+                            <br>
+                        <% }) %>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Budget Performance Section -->
+        <section id="budget-performance">
+            <div>
+                <span id="section-title">Budget Performance</span>
+                <div id="income-budgets">
+                    <h4>Income Budgets</h4>
+                    <% if (incomeCategoriesUnderBudget.length > 0) { %>
+                        <ul>
+                            <% incomeCategoriesUnderBudget.forEach(function(incomeCategory) { %>
+                                <li><b>Category:</b> <%= incomeCategory.categoryName %></li>
+                                <li><b>Budget:</b> $<%= incomeCategory.budgetedAmount %></li>
+                                <li><b>Actual:</b> $<%= incomeCategory.actualAmount %></li>
+                                <li><b>Tips:</b> <%= incomeCategory.tips %></li>
+                                <br>
+                            <% }) %>
+                        </ul>
+                    <% } else { %>
+                        <p>No income categories were under budget this month.</p>
+                    <% } %>
+                </div>
+                <div id="expense-budgets">
+                    <h4>Expense Budgets</h4>
+                    <% if (expenseCategoriesOverBudget.length > 0) { %>
+                        <ul>
+                            <% expenseCategoriesOverBudget.forEach(function(expenseCategory) { %>
+                                <li><b>Category:</b> <%= expenseCategory.categoryName %></li>
+                                <li><b>Budget:</b> $<%= expenseCategory.budgetedAmount %></li>
+                                <li><b>Actual:</b> $<%= expenseCategory.actualAmount %></li>
+                                <li><b>Tips:</b> <%= expenseCategory.tips %></li>
+                                <br>
+                            <% }) %>
+                        </ul>
+                    <% } else { %>
+                        <p>No expense categories were over budget this month.</p>
+                    <% } %>
+                </div>
+            </div>
+        </section>
+
+        <div id="navbar">
+            <div class="navbar-button" onclick="document.onNavbarButtonClick(0)">
+                <span class="icon">grid_view</span>
+                <span>Dashboard</span>
+            </div>
+            <div class="navbar-button" onclick="document.onNavbarButtonClick(1)">
+                <span class="icon">payments</span>
+                <span>My Income</span>
+            </div>
+            <div class="navbar-button" onclick="document.onNavbarButtonClick(2)">
+                <span class="icon">trending_down</span>
+                <span>My Expenses</span>
+            </div>
+            <div class="navbar-button selected" onclick="document.onNavbarButtonClick(3)">
+                <span class="icon">data_usage</span>
+                <span>Summary</span>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="about container">
+            <p>CM2020 Agile Software Projects: <%= app_name %></p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/scripts/summaryCharts.js"></script>
+    <script src="/scripts/navbar.js"></script>
+
+</body>
+</html>

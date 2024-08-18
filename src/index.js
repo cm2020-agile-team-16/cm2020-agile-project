@@ -9,6 +9,7 @@ import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import { router as accountRouter } from "./routes/account.js";
 import { router as userRouter } from "./routes/user.js";
+import { router as apiRouter } from "./routes/api.js";
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -54,6 +55,7 @@ app.get('/', (req, res) => {
 app.use('/account', accountRouter); 
 
 // Add all the route handlers in userRouter to the app under the path /user
+userRouter.use('/api', apiRouter);
 app.use('/user', userRouter); 
 
 

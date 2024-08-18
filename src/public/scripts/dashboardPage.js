@@ -268,7 +268,7 @@ const populateBalanceCard = (currentTransactions, monthYear) => {
 
 const populateBudgetPlansSection = (monthYear) => {
     const section = document.querySelector('section#budget-plans-section');
-    const title = section.querySelector('span#section-title');
+    const title = section.querySelector('span.section-title');
     title.textContent = `Budget Plans for ${monthYearToString(monthYear)}`
 };
 

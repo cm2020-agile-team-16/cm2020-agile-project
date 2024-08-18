@@ -7,7 +7,7 @@
     <!-- TAB TITLE -->
     <title>Dashboard - <%= app_name %></title>
     <!-- LINK TO STYLESHEETS / GOOGLE FONTS -->
-    <link rel="stylesheet" href="/styles/dashboard.css">
+    <link rel="stylesheet" href="/styles/common.css">
     <link rel="stylesheet" href="/styles/icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
@@ -45,7 +45,7 @@
 
         <section id="budget-plans-section">
             <div>
-                <span id="section-title"></span>
+                <span class="section-title"></span>
                 <canvas id="incomes-chart" width="1000" height="200"></canvas>
                 <canvas id="expenses-chart" width="1000" height="200"></canvas>
             </div>
@@ -54,15 +54,6 @@
         <section id="recent-transactions">
             <div class="flex-row" style="justify-content: space-between;">
                 <span id="section-title">Recent Transactions</span>
-                <div id="sort">
-                    <span style="color: rgb(100, 100, 100)">Sort by</span>
-                    <select name="sort-key" class="sort-dropdown">
-                        <option value="latest" selected>Latest</option>
-                        <option value="oldest">Oldest</option>
-                        <option value="amount-desc">High-Low</option>
-                        <option value="amount-asc">Low-High</option>
-                    </select>
-                </div>
             </div>
 
             <div class="transaction-list"></div>

@@ -16,7 +16,16 @@
 <body>
     <header>
         <div id="welcome">
-            <span id="dashboard-header-text">My Income</span>
+            <span id="dashboard-header-text">
+                My Income
+                <select name="sort-key" id="month-year-dropdown" class="dropdown">
+                    <!--
+                    <option value="2024-07" selected>July 2024</option>
+                    <option value="2024-06">June 2024</option>
+                    <option value="2024-05">May 2024</option>
+                -->
+                </select>
+            </span>
         </div>
         <div id="profile">
             <img id="profile-picture" src="/assets/images/pfp.png" onclick="window.location.href = '/account/profile/'" alt="profile picture">
@@ -27,28 +36,13 @@
     <main id="flex">
 
         <section id="income-categories-chart-section">
-            <span id="section-title">Income Categories for <b><%= month %> <%= year %></b></span>
+            <span class="section-title"></span>
             <canvas id="income-categories-chart" width="1000" height="200"></canvas>
-            <div class="data"
-                data-budgeted-income="<%= budgetedIncome %>"
-                data-total-income="<%= totalIncome %>"
-            >
-                <div>
-                    <%= JSON.stringify(incomes) %>
-                </div>
-                <div>
-                    <%= JSON.stringify(incomeCategories) %>
-                </div>
-            </div>
         </section>
 
         <section id="income-chart-section">
+            <span class="section-title"></span>
             <canvas id="income-chart" width="1000" height="200"></canvas>
-            <div class="data"
-                data-budgeted-income="<%= budgetedIncome %>"
-                data-total-income="<%= totalIncome %>"
-            >
-            </div>
         </section>
 
         <section class="flex-row" id="search">
@@ -63,7 +57,7 @@
                 <span id="section-title">Recent Incomes</span>
                 <div id="sort">
                     <span style="color: rgb(100, 100, 100)">Sort by</span>
-                    <select name="sort-key" class="sort-dropdown">
+                    <select name="sort-key" class="dropdown">
                         <option value="latest" selected>Latest</option>
                         <option value="oldest">Oldest</option>
                         <option value="amount-desc">High-Low</option>
@@ -72,21 +66,7 @@
                 </div>
             </div>
 
-            <div class="transaction-list">
-                <% incomes.forEach(function(transaction) { %>
-                    <div class="transaction">
-                        <div class="transaction-icon">
-                            <i class="fa <%= transaction.icon %>"></i>
-                        </div>
-                        <div class="transaction-info">
-                            <div class="transaction-source"><%= transaction.source %></div>
-                            <div class="transaction-date"><%= new Date(transaction.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) %></div>
-                        </div>
-                        <div class="transaction-category"><%= transaction.category %></div>
-                        <div class="amount-income">+<%= transaction.amount.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }) %></div>
-                    </div>
-                <% }) %>
-            </div>
+            <div class="transaction-list"></div>
         </section>
 
         <div id="navbar">
@@ -116,7 +96,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/scripts/incomeCharts.js"></script>
+    <script src="/scripts/incomePage.js"></script>
     <script src="/scripts/navbar.js"></script>
 
 </body>

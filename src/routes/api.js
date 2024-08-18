@@ -150,19 +150,22 @@ router.get('/budgeted-income', async (req, res) => {
     });
 
     const budgetedIncomeQuery = `
-        SELECT
-        COALESCE(SUM(amount), 0) AS budgetedIncome
-        FROM incomeBudget
-        WHERE user_id = ?
-        AND substr(month, 1, 4) = ?
-        AND substr(month, 6, 2) = ?
+        SELECT 
+            ic.name AS category,
+            ib.amount
+        FROM incomeBudget ib
+        JOIN incomeCategory ic 
+        ON ib.income_category_id = ic.income_category_id
+        WHERE ib.user_id = ?
+        AND substr(ib.month, 1, 4) = ?
+        AND substr(ib.month, 6, 2) = ?
     `;
 
     const month = req.query.month;
     const year = req.query.year;
 
     try {
-        const budgetedIncome = await db.get(budgetedIncomeQuery, [userId, year, month]);
+        const budgetedIncome = await db.all(budgetedIncomeQuery, [userId, year, month]);
         res.json(budgetedIncome);
     } catch (error) {
         console.error(error.message);
@@ -188,8 +191,11 @@ router.get('/budgeted-expenses', async (req, res) => {
 
     const budgetedExpensesQuery = `
         SELECT
-        COALESCE(SUM(amount), 0) AS budgetedExpenses
-        FROM expenseBudget
+            ec.name AS category,
+            eb.amount
+        FROM expenseBudget eb
+        JOIN expenseCategory ec
+        ON eb.expense_category_id = ec.expense_category_id
         WHERE user_id = ?
         AND substr(month, 1, 4) = ?
         AND substr(month, 6, 2) = ?
@@ -199,7 +205,7 @@ router.get('/budgeted-expenses', async (req, res) => {
     const year = req.query.year;
 
     try {
-        const budgetedExpenses = await db.get(budgetedExpensesQuery, [userId, year, month]);
+        const budgetedExpenses = await db.all(budgetedExpensesQuery, [userId, year, month]);
         res.json(budgetedExpenses);
     } catch (error) {
         console.error(error.message);

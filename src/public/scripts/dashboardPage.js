@@ -18,21 +18,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     const monthYear = monthYears[0];
 
     const currentTransactions = await fetchTransactions(monthYear);
-    const budgetedIncome = await fetchBudgetedIncome(monthYear);
-    const budgetedExpenses = await fetchBudgetedExpenses(monthYear);
+    const budgetedIncomesThisMonth = await fetchBudgetedIncome(monthYear);
+    const budgetedExpensesThisMonth = await fetchBudgetedExpenses(monthYear);
+
+    const totalBudgetedIncome = budgetedIncomesThisMonth.reduce((accumulator, budget) => {
+        accumulator += budget.amount;
+        return accumulator;
+    }, 0);
+
+    const totalBudgetedExpenses = budgetedExpensesThisMonth.reduce((accumulator, budget) => {
+        accumulator += budget.amount;
+        return accumulator;
+    }, 0);
 
     await updatePage(
         currentTransactions,
-        budgetedIncome,
-        budgetedExpenses,
+        totalBudgetedIncome,
+        totalBudgetedExpenses,
         monthYear,
     );
 });
 
 const updatePage = async (
     currentTransactions,
-    budgetedIncome,
-    budgetedExpenses,
+    totalBudgetedIncome,
+    totalBudgetedExpenses,
     monthYear,
 ) => {
     const allTransactions = [...currentTransactions.incomes, ...currentTransactions.expenses];
@@ -56,16 +66,16 @@ const updatePage = async (
 
     incomesChart = renderIncomesChart(
         currentTransactions.incomes,
-        budgetedIncome,
+        totalBudgetedIncome,
     );
 
     expensesChart = renderExpensesChart(
         currentTransactions.expenses,
-        budgetedExpenses,
+        totalBudgetedExpenses,
     );
 };
 
-const renderIncomesChart = (currentIncomes, budgetedIncome) => {
+const renderIncomesChart = (currentIncomes, totalBudgetedIncome) => {
     const budgetPlansSection = document.querySelector('section#budget-plans-section');
     const context = budgetPlansSection.querySelector('canvas#incomes-chart').getContext('2d');
 
@@ -81,7 +91,7 @@ const renderIncomesChart = (currentIncomes, budgetedIncome) => {
             datasets: [
                 {
                     label: 'Budgeted',
-                    data: [budgetedIncome],
+                    data: [totalBudgetedIncome],
                     backgroundColor: 'rgba(245, 245, 245, 1)',
                     stack: 'stack1'
                 },
@@ -152,7 +162,7 @@ const renderIncomesChart = (currentIncomes, budgetedIncome) => {
     return incomesChart;
 };
 
-const renderExpensesChart = (currentExpenses, budgetedExpenses) => {
+const renderExpensesChart = (currentExpenses, totalBudgetedExpenses) => {
     const budgetPlansSection = document.querySelector('section#budget-plans-section');
     const context = budgetPlansSection.querySelector('canvas#expenses-chart').getContext('2d');
 
@@ -168,7 +178,7 @@ const renderExpensesChart = (currentExpenses, budgetedExpenses) => {
             datasets: [
                 {
                     label: 'Budgeted',
-                    data: [budgetedExpenses],
+                    data: [totalBudgetedExpenses],
                     backgroundColor: 'rgba(245, 245, 245, 1)',
                     stack: 'stack1'
                 },

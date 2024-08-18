@@ -41,16 +41,24 @@ const updatePage = async (monthYear) => {
     incomeCategoryChart = renderIncomeCategoryChart(
         currentTransactions.incomes,
         incomeCategories,
+        budgetedIncome,
         monthYear
     );
+    /*
     incomeChart = renderIncomeChart(
         currentTransactions.incomes,
         budgetedIncome,
         monthYear
     );
+    */
 };
 
-const renderIncomeCategoryChart = (currentIncomes, incomeCategories, monthYear) => {
+const renderIncomeCategoryChart = (
+    currentIncomes,
+    incomeCategories,
+    budgetedIncome,
+    monthYear,
+) => {
     const categoryChartSection = document.querySelector('section#income-categories-chart-section');
     const sectionTitle = categoryChartSection.querySelector('span.section-title');
     const incomeCategoriesCtx = categoryChartSection.querySelector('canvas#income-categories-chart').getContext('2d');
@@ -85,16 +93,32 @@ const renderIncomeCategoryChart = (currentIncomes, incomeCategories, monthYear) 
         total: (total / totalIncomeBeforeExpenses) * 100,
     }));
 
+    const defaultIncomeCategoryBudgetMap = incomeCategories.reduce((accumulator, category) => {
+        accumulator[category.name] = 0;
+        return accumulator;
+    }, {});
+
+    const incomeCategoryBudgetMap = budgetedIncome.reduce((accumulator, budget) => {
+        accumulator[budget.category] = (budget.amount / totalIncomeBeforeExpenses) * 100;
+        return accumulator;
+    }, defaultIncomeCategoryBudgetMap);
+
     const incomeCategoryChart = new Chart(incomeCategoriesCtx, {
         type: 'bar',
         data: {
             labels: sortedCategoryPercentages.map(category => category.name),
             datasets: [
                 {
+                    label: 'Actual',
                     data: sortedCategoryPercentages.map(category => category.total),
-                    backgroundColor: 'rgba(63, 236, 63, 1)'
-                }
-            ]
+                    backgroundColor: 'rgba(63, 236, 63, 1)',
+                },
+                {
+                    label: 'Budgeted',
+                    data: sortedCategoryPercentages.map(category => incomeCategoryBudgetMap[category.name]),
+                    backgroundColor: 'rgba(245, 245, 245, 1)',
+                },
+            ],
         },
         options: {
             responsive: true,
@@ -114,7 +138,16 @@ const renderIncomeCategoryChart = (currentIncomes, incomeCategories, monthYear) 
                         }
                     }
                 }
-            }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: (tooltipItem) => {
+                            return `${tooltipItem.dataset.label}: ${tooltipItem.raw.toFixed(2)}%`;
+                        },
+                    },
+                },
+            },
         }
     });
 

@@ -51,7 +51,7 @@ export const fetchBudgetedIncome = async (monthYear) => {
 
     if (response.ok) {
         const budgetedIncome = await response.json();
-        return budgetedIncome.budgetedIncome;
+        return budgetedIncome;
     }
 
     return undefined;
@@ -65,7 +65,7 @@ export const fetchBudgetedExpenses = async (monthYear) => {
 
     if (response.ok) {
         const budgetedExpenses = await response.json();
-        return budgetedExpenses.budgetedExpenses;
+        return budgetedExpenses;
     }
 
     return undefined;

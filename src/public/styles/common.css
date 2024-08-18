@@ -1,4 +1,3 @@
-/* Specific styles for the dashboard page */
 
 * {
     font-family: 'Poppins', sans-serif;
@@ -144,7 +143,7 @@ section#recent-transactions {
     }
 }
 
-#section-title {
+.section-title {
     font-size: 1.2em;
     font-weight: bold;
 }
@@ -155,7 +154,7 @@ section#recent-transactions {
     align-items: center;
 }
 
-select.sort-dropdown {
+select.dropdown {
     background-color: rgb(30, 30, 30);
     color: white;
     font-size: 1em;
@@ -296,5 +295,43 @@ select.sort-dropdown {
             visibility: hidden;
         }
     }
-    
+}
+
+input#search-bar {
+    width: 100%;
+    height: 48px;
+    color: white;
+    background-color: rgb(40, 40, 40);
+    background-position: calc(100% - 16px) 50%;
+    padding-left: 24px;
+    outline: none;
+    box-shadow: none;
+    border: 0;
+}
+
+#search-filters {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(59, 59, 59);
+    width: 48px;
+    height: 48px;
+    user-select: none;
+    cursor: pointer;
+    transition: filter 100ms ease;
+    span {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        font-size: 32px;
+    }
+    &:hover {
+        filter: brightness(1.2);
+    }
+    &:active {
+        filter: brightness(0.8);
+    }
 }

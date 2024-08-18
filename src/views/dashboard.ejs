@@ -7,7 +7,7 @@
     <!-- TAB TITLE -->
     <title>Dashboard - <%= app_name %></title>
     <!-- LINK TO STYLESHEETS / GOOGLE FONTS -->
-    <link rel="stylesheet" href="/styles/dashboard.css">
+    <link rel="stylesheet" href="/styles/common.css">
     <link rel="stylesheet" href="/styles/icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
@@ -26,67 +26,37 @@
     </header>
 
     <main id="flex">
-
         <section id="balance-card">
             <div class="row flex-col" id="balance">
-                <span class="row" id="balance-text">Balance for <b><%= month %> <%= year %></b></span>
-                <span class="row" id="balance-amount"><%= balance.toLocaleString("en-US", { style: "currency", currency: "USD" }) %></span>
+                <span class="row" id="balance-text"></span>
+                <span class="row" id="balance-amount"></span>
             </div>
             <div class="row flex-row">
-                <div class="row flex-col">
+                <div class="row flex-col" id="income">
                     <span class="row" id="text">Total Income</span>
-                    <span class="row" id="amount"><%= totalIncome.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }) %></span>
+                    <span class="row" id="amount"></span>
                 </div>
-                <div class="row flex-col">
+                <div class="row flex-col" id="expenses">
                     <span class="row" id="text">Total Expenses</span>
-                    <span class="row" id="amount"><%= totalExpenses.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }) %></span>
+                    <span class="row" id="amount"></span>
                 </div>
             </div>
         </section>
 
-        <section id="budget-plans">
+        <section id="budget-plans-section">
             <div>
-                <span id="section-title">Budget Plans for <b><%= month %> <%= year %></b></span>
-                <canvas id="incomeChart" width="1000" height="200"></canvas>
-                <canvas id="expensesChart" width="1000" height="200"></canvas>
-                <div id="data"
-                    data-budgeted-income="<%= budgetedIncome %>"
-                    data-total-income="<%= totalIncome %>"
-                    data-budgeted-expenses="<%= budgetedExpenses %>"
-                    data-total-expenses="<%= totalExpenses %>">
-                </div>
+                <span class="section-title"></span>
+                <canvas id="incomes-chart" width="1000" height="200"></canvas>
+                <canvas id="expenses-chart" width="1000" height="200"></canvas>
             </div>
         </section>
 
         <section id="recent-transactions">
             <div class="flex-row" style="justify-content: space-between;">
                 <span id="section-title">Recent Transactions</span>
-                <div id="sort">
-                    <span style="color: rgb(100, 100, 100)">Sort by</span>
-                    <select name="sort-key" class="sort-dropdown">
-                        <option value="latest" selected>Latest</option>
-                        <option value="oldest">Oldest</option>
-                        <option value="amount-desc">High-Low</option>
-                        <option value="amount-asc">Low-High</option>
-                    </select>
-                </div>
             </div>
 
-            <div class="transaction-list">
-                <% recentTransactions.forEach(function(transaction) { %>
-                    <div class="transaction">
-                        <div class="transaction-icon">
-                            <i class="fa <%= transaction.icon %>"></i>
-                        </div>
-                        <div class="transaction-info">
-                            <div class="transaction-source"><%= transaction.source %></div>
-                            <div class="transaction-date"><%= new Date(transaction.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) %></div>
-                        </div>
-                        <div class="transaction-category"><%= transaction.category %></div>
-                        <div class="<%= transaction.type === "income" ? "amount-income" : "amount-expense" %>"><%= transaction.type === "income" ? "+" : "-" %><%= transaction.amount.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }) %></div>
-                    </div>
-                <% }) %>
-            </div>
+            <div class="transaction-list"></div>
         </section>
 
         <div id="navbar">
@@ -108,8 +78,6 @@
             </div>
         </div>
     </main>
-    
-
 
     <footer>
         <div class="about container">
@@ -118,7 +86,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/scripts/dashboardCharts.js"></script>
+    <script src="/scripts/dashboardPage.js" type="module"></script>
     <script src="/scripts/navbar.js"></script>
 
 </body>

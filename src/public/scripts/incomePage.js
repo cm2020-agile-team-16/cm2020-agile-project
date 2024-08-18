@@ -1,3 +1,11 @@
+import {
+    monthYearToString,
+    fetchAllMonthYears,
+    fetchTransactions,
+    fetchAllIncomeCategories,
+    fetchBudgetedIncome,
+} from "./commonPageHelpers.js";
+
 
 let incomeCategoryChart = null;
 let incomeChart = null;
@@ -6,12 +14,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     const monthYears = await fetchAllMonthYears();
     // Set current month and year to most recent month and year
     const monthYear = monthYears[0];
+    populateMonthYearDropdown(monthYears);
 
+    updatePage(monthYear);
+});
+
+const updatePage = async (monthYear) => {
     const currentTransactions = await fetchTransactions(monthYear);
     const budgetedIncome = await fetchBudgetedIncome(monthYear);
     const incomeCategories = await fetchAllIncomeCategories();
-    populateMonthYearDropdown(monthYears);
+
     populateRecentIncomesList(currentTransactions.incomes);
+
+    // Destroy old charts to make canvases available, then render new charts
+    if (incomeCategoryChart) {
+        incomeCategoryChart.destroy();
+        incomeCategoryChart = null;
+    }
+
+    if (incomeChart) {
+        incomeChart.destroy();
+        incomeChart = null;
+    }
+
     incomeCategoryChart = renderIncomeCategoryChart(
         currentTransactions.incomes,
         incomeCategories,
@@ -22,65 +47,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         budgetedIncome,
         monthYear
     );
-});
-
-const monthYearToString = (monthYear) => {
-    const monthName = Intl.DateTimeFormat('en', { month: 'long' }).format(new Date(monthYear.month));
-    return `${monthName} ${monthYear.year}`
-};
-
-const fetchAllMonthYears = async () => {
-    const url = 'api/income-months';
-    const response = await fetch(url, {
-        method: "GET",
-    });
-
-    if (response.ok) {
-        const dates = await response.json();
-        return dates;
-    }
-};
-
-const fetchTransactions = async (monthYear) => {
-    const url = `api/transactions?month=${monthYear.month}&year=${monthYear.year}`;
-    const response = await fetch(url, {
-        method: "GET",
-    });
-
-    if (response.ok) {
-        const transactions = await response.json();
-        return transactions;
-    }
-
-    return { expenses: [], incomes: [] };
-};
-
-const fetchAllIncomeCategories = async () => {
-    const url = 'api/income-categories';
-    const response = await fetch(url, {
-        method: "GET",
-    });
-
-    if (response.ok) {
-        const incomeCategories = await response.json();
-        return incomeCategories;
-    }
-
-    return [];
-};
-
-const fetchBudgetedIncome = async (monthYear) => {
-    const url = `api/budgeted-income?month=${monthYear.month}&year=${monthYear.year}`;
-    const response = await fetch(url, {
-        method: "GET",
-    });
-
-    if (response.ok) {
-        const budgetedIncome = await response.json();
-        return budgetedIncome.budgetedIncome;
-    }
-
-    return undefined;
 };
 
 const renderIncomeCategoryChart = (currentIncomes, incomeCategories, monthYear) => {
@@ -261,33 +227,8 @@ const populateMonthYearDropdown = (monthYears) => {
             month: parts[1],
             year: parts[0]
         };
-        const currentTransactions = await fetchTransactions(monthYear);
-        const budgetedIncome = await fetchBudgetedIncome(monthYear);
-        const incomeCategories = await fetchAllIncomeCategories();
 
-        populateRecentIncomesList(currentTransactions.incomes);
-
-        // Destroy old charts to make canvases available, then render new charts
-        if (incomeCategoryChart) {
-            incomeCategoryChart.destroy();
-            incomeCategoryChart = null;
-        }
-
-        if (incomeChart) {
-            incomeChart.destroy();
-            incomeChart = null;
-        }
-
-        incomeCategoryChart = renderIncomeCategoryChart(
-            currentTransactions.incomes,
-            incomeCategories,
-            monthYear
-        );
-        incomeChart = renderIncomeChart(
-            currentTransactions.incomes,
-            budgetedIncome,
-            monthYear
-        );
+        updatePage(monthYear);
     };
 
     dropdown.addEventListener('change', onMonthYearDropdownChange);

@@ -26,7 +26,8 @@ app.use(express.static(path.join(__dirname, 'public'))); // set location of stat
 app.use(session({
     secret: 'secret_key',
     resave: false,
-    saveUninitialized: true, // set to true if using HTTPS
+    saveUninitialized: true,
+    cookie: { secure: false },
 }));
 
 // Set up SQLite

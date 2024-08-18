@@ -133,6 +133,9 @@ router.get('/income-categories', async (req, res) => {
     }
 });
 
+/**
+ * @desc API endpoint for fetching a user's budgeted income.
+ */
 router.get('/budgeted-income', async (req, res) => {
     if (!req.session.userId) {
         res.sendStatus(401);
@@ -161,6 +164,43 @@ router.get('/budgeted-income', async (req, res) => {
     try {
         const budgetedIncome = await db.get(budgetedIncomeQuery, [userId, year, month]);
         res.json(budgetedIncome);
+    } catch (error) {
+        console.error(error.message);
+        res.sendStatus(500);
+    }
+});
+
+/**
+ * @desc API endpoint for fetching a user's budgeted expenses.
+ */
+router.get('/budgeted-expenses', async (req, res) => {
+    if (!req.session.userId) {
+        res.sendStatus(401);
+        return;
+    }
+
+    const userId = req.session.userId;
+
+    const db = await open({
+        filename: "./database.db",
+        driver: sqlite3.Database,
+    });
+
+    const budgetedExpensesQuery = `
+        SELECT
+        COALESCE(SUM(amount), 0) AS budgetedExpenses
+        FROM expenseBudget
+        WHERE user_id = ?
+        AND substr(month, 1, 4) = ?
+        AND substr(month, 6, 2) = ?
+    `;
+
+    const month = req.query.month;
+    const year = req.query.year;
+
+    try {
+        const budgetedExpenses = await db.get(budgetedExpensesQuery, [userId, year, month]);
+        res.json(budgetedExpenses);
     } catch (error) {
         console.error(error.message);
         res.sendStatus(500);

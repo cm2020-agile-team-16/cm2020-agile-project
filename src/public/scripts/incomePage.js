@@ -4,6 +4,7 @@ import {
     fetchTransactions,
     fetchAllIncomeCategories,
     fetchBudgetedIncome,
+    createTransactionElement,
 } from "./commonPageHelpers.js";
 
 
@@ -16,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const monthYear = monthYears[0];
     populateMonthYearDropdown(monthYears);
 
-    updatePage(monthYear);
+    await updatePage(monthYear);
 });
 
 const updatePage = async (monthYear) => {
@@ -228,7 +229,7 @@ const populateMonthYearDropdown = (monthYears) => {
             year: parts[0]
         };
 
-        updatePage(monthYear);
+        await updatePage(monthYear);
     };
 
     dropdown.addEventListener('change', onMonthYearDropdownChange);
@@ -236,50 +237,6 @@ const populateMonthYearDropdown = (monthYears) => {
 
 const populateRecentIncomesList = (incomes) => {
     const recentIncomesList = document.querySelector('section#recent-transactions div.transaction-list');
-
-    const createIncomeElement = (transaction) => {
-        const transactionElement = document.createElement('div');
-        transactionElement.classList.add('transaction');
-
-        const transactionIconDiv = document.createElement('div');
-        transactionIconDiv.classList.add('transaction-icon');
-
-        const transactionIcon = document.createElement('i');
-        transactionIcon.classList.add('fa');
-        transactionIcon.classList.add(transaction.icon);
-
-        transactionIconDiv.appendChild(transactionIcon);
-
-        const transactionInfo = document.createElement('div');
-        transactionInfo.classList.add('transaction-info');
-
-        const transactionSource = document.createElement('div');
-        transactionSource.classList.add('transaction-source');
-        transactionSource.textContent = transaction.source;
-
-        const transactionDate = document.createElement('div');
-        transactionDate.classList.add('transaction-date');
-        transactionDate.textContent = new Date(transaction.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
-
-        transactionInfo.appendChild(transactionSource);
-        transactionInfo.appendChild(transactionDate);
-
-        const transactionCategory = document.createElement('div');
-        transactionCategory.classList.add('transaction-category');
-        transactionCategory.textContent = transaction.category;
-
-        const amountIncome = document.createElement('div');
-        amountIncome.classList.add('amount-income');
-        amountIncome.textContent = `+${transaction.amount.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}`;
-
-        transactionElement.appendChild(transactionIconDiv);
-        transactionElement.appendChild(transactionInfo);
-        transactionElement.appendChild(transactionCategory);
-        transactionElement.appendChild(amountIncome);
-
-        return transactionElement;
-    };
-
-    const newChildren = incomes.map(income => createIncomeElement(income));
+    const newChildren = incomes.map(income => createTransactionElement(income));
     recentIncomesList.replaceChildren(...newChildren);
 };

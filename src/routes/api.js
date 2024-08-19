@@ -7,7 +7,7 @@ export const router = express.Router();
 /**
  * @desc API endpoint for fetching list of valid months/years based on user's income history.
  */
-router.get('/income-months', async (req, res) => {
+router.get('/income-month-years', async (req, res) => {
     if (!req.session.userId) {
         res.sendStatus(401);
         return;
@@ -20,7 +20,7 @@ router.get('/income-months', async (req, res) => {
         driver: sqlite3.Database,
     });
 
-    const incomesQuery = `
+    const incomeDatesQuery = `
         SELECT date
         FROM income I
         JOIN incomeCategory IC ON I.income_category_id = IC.income_category_id
@@ -35,9 +35,58 @@ router.get('/income-months', async (req, res) => {
     };
 
     try {
-        const incomeDates = await db.all(incomesQuery, [userId]);
+        const incomeDates = await db.all(incomeDatesQuery, [userId]);
         const monthYears = incomeDates.map(incomeDate => {
             const date = new Date(incomeDate.date);
+            return dateToMonthYear(date);
+        });
+        const uniqueMonthYears = monthYears.reduce((accumulator, monthYear) => {
+            if (!accumulator.some(my => my.month === monthYear.month && my.year === monthYear.year)) {
+                accumulator.push(monthYear);
+            }
+            return accumulator;
+        }, []);
+        res.json(uniqueMonthYears.length ? uniqueMonthYears : [dateToMonthYear(new Date())]);
+    } catch (error) {
+        console.error(error.message);
+        res.sendStatus(500);
+    }
+});
+
+/**
+ * @desc API endpoint for fetching list of valid months/years based on user's expenses history.
+ */
+router.get('/expenses-month-years', async (req, res) => {
+    if (!req.session.userId) {
+        res.sendStatus(401);
+        return;
+    }
+
+    const userId = req.session.userId;
+
+    const db = await open({
+        filename: "./database.db",
+        driver: sqlite3.Database,
+    });
+
+    const expensesDatesQuery = `
+        SELECT date
+        FROM expenses E
+        JOIN expenseCategory EC ON E.expense_category_id = EC.expense_category_id
+        WHERE E.user_id = ?
+        ORDER BY date DESC
+    `;
+
+    const dateToMonthYear = (date) => {
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear().toString();
+        return { month, year };
+    };
+
+    try {
+        const expensesDates = await db.all(expensesDatesQuery, [userId]);
+        const monthYears = expensesDates.map(expenseDate => {
+            const date = new Date(expenseDate.date);
             return dateToMonthYear(date);
         });
         const uniqueMonthYears = monthYears.reduce((accumulator, monthYear) => {

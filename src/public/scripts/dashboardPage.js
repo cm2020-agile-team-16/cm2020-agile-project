@@ -1,8 +1,8 @@
-
 import {
     monthYearToString,
-    fetchAllMonthYears,
-    fetchTransactions,
+    fetchIncomeMonthYears,
+    fetchExpensesMonthYears,
+    fetchTransactionsForMonthYear,
     fetchBudgetedIncome,
     fetchBudgetedExpenses,
     createTransactionElement,
@@ -13,11 +13,19 @@ let incomesChart = null;
 let expensesChart = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const monthYears = await fetchAllMonthYears();
+    const incomeMonthYears = await fetchIncomeMonthYears();
+    const expensesMonthYears = await fetchExpensesMonthYears();
+    // Join the two arrays of monthYears, sort by date
+    const monthYears = [...incomeMonthYears, ...expensesMonthYears].toSorted((my1, my2) => {
+        const date1 = `${my1.year}-${my1.month}`;
+        const date2 = `${my2.year}-${my2.month}`;
+        return new Date(date2) - new Date(date1);
+    });
+
     // Set current month and year to most recent month and year
     const monthYear = monthYears[0];
 
-    const currentTransactions = await fetchTransactions(monthYear);
+    const currentTransactions = await fetchTransactionsForMonthYear(monthYear);
     const budgetedIncomesThisMonth = await fetchBudgetedIncome(monthYear);
     const budgetedExpensesThisMonth = await fetchBudgetedExpenses(monthYear);
 
@@ -46,7 +54,7 @@ const updatePage = async (
     monthYear,
 ) => {
     const allTransactions = [...currentTransactions.incomes, ...currentTransactions.expenses];
-    const sortedTransactions = allTransactions.sort((t1, t2) => new Date(t2.date) - new Date(t1.date));
+    const sortedTransactions = allTransactions.toSorted((t1, t2) => new Date(t2.date) - new Date(t1.date));
     const threeMostRecent = sortedTransactions.slice(0, 3);
 
     populateBalanceCard(currentTransactions, monthYear);

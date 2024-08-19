@@ -1,7 +1,7 @@
 import {
     monthYearToString,
-    fetchAllMonthYears,
-    fetchTransactions,
+    fetchIncomeMonthYears,
+    fetchTransactionsForMonthYear,
     fetchAllIncomeCategories,
     fetchBudgetedIncome,
     createTransactionElement,
@@ -9,19 +9,18 @@ import {
 
 
 let incomeCategoryChart = null;
-let incomeChart = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const monthYears = await fetchAllMonthYears();
+    const incomeMonthYears = await fetchIncomeMonthYears();
     // Set current month and year to most recent month and year
-    const monthYear = monthYears[0];
-    populateMonthYearDropdown(monthYears);
+    const monthYear = incomeMonthYears[0];
+    populateMonthYearDropdown(incomeMonthYears);
 
     await updatePage(monthYear);
 });
 
 const updatePage = async (monthYear) => {
-    const currentTransactions = await fetchTransactions(monthYear);
+    const currentTransactions = await fetchTransactionsForMonthYear(monthYear);
     const budgetedIncome = await fetchBudgetedIncome(monthYear);
     const incomeCategories = await fetchAllIncomeCategories();
 
@@ -33,24 +32,12 @@ const updatePage = async (monthYear) => {
         incomeCategoryChart = null;
     }
 
-    if (incomeChart) {
-        incomeChart.destroy();
-        incomeChart = null;
-    }
-
     incomeCategoryChart = renderIncomeCategoryChart(
         currentTransactions.incomes,
         incomeCategories,
         budgetedIncome,
         monthYear
     );
-    /*
-    incomeChart = renderIncomeChart(
-        currentTransactions.incomes,
-        budgetedIncome,
-        monthYear
-    );
-    */
 };
 
 const renderIncomeCategoryChart = (
@@ -88,34 +75,29 @@ const renderIncomeCategoryChart = (
         return sum + category.total;
     }, 0);
 
-    const sortedCategoryPercentages = sortedCategoryTotals.map(({name, total}) => ({
-        name: name,
-        total: (total / totalIncomeBeforeExpenses) * 100,
-    }));
-
     const defaultIncomeCategoryBudgetMap = incomeCategories.reduce((accumulator, category) => {
         accumulator[category.name] = 0;
         return accumulator;
     }, {});
 
     const incomeCategoryBudgetMap = budgetedIncome.reduce((accumulator, budget) => {
-        accumulator[budget.category] = (budget.amount / totalIncomeBeforeExpenses) * 100;
+        accumulator[budget.category] = budget.amount;
         return accumulator;
     }, defaultIncomeCategoryBudgetMap);
 
     const incomeCategoryChart = new Chart(incomeCategoriesCtx, {
         type: 'bar',
         data: {
-            labels: sortedCategoryPercentages.map(category => category.name),
+            labels: sortedCategoryTotals.map(category => category.name),
             datasets: [
                 {
                     label: 'Actual',
-                    data: sortedCategoryPercentages.map(category => category.total),
+                    data: sortedCategoryTotals.map(category => category.total),
                     backgroundColor: 'rgba(63, 236, 63, 1)',
                 },
                 {
                     label: 'Budgeted',
-                    data: sortedCategoryPercentages.map(category => incomeCategoryBudgetMap[category.name]),
+                    data: sortedCategoryTotals.map(category => incomeCategoryBudgetMap[category.name]),
                     backgroundColor: 'rgba(245, 245, 245, 1)',
                 },
             ],
@@ -131,10 +113,9 @@ const renderIncomeCategoryChart = (
                 y: {
                     beginAtZero: true,
                     min: 0,
-                    max: 100,
                     ticks: {
                         callback: function(value) {
-                            return value + '%';
+                            return value.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
                         }
                     }
                 }
@@ -143,7 +124,8 @@ const renderIncomeCategoryChart = (
                 tooltip: {
                     callbacks: {
                         label: (tooltipItem) => {
-                            return `${tooltipItem.dataset.label}: ${tooltipItem.raw.toFixed(2)}%`;
+                            const amount = tooltipItem.raw.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+                            return `${tooltipItem.dataset.label}: ${amount}`;
                         },
                     },
                 },
@@ -152,96 +134,6 @@ const renderIncomeCategoryChart = (
     });
 
     return incomeCategoryChart;
-};
-
-const renderIncomeChart = (currentIncomes, budgetedIncome, monthYear) => {
-    const incomeChartSection = document.querySelector('section#income-chart-section');
-    const sectionTitle = incomeChartSection.querySelector('span.section-title');
-    const incomeCtx = incomeChartSection.querySelector('canvas#income-chart').getContext('2d');
-
-    sectionTitle.textContent = `Income for ${monthYearToString(monthYear)}`;
-
-    const totalIncome = currentIncomes.reduce((accumulator, income) => {
-        accumulator += income.amount;
-        return accumulator;
-    }, 0);
-
-    const incomeChart = new Chart(incomeCtx, {
-        type: 'bar',
-        data: {
-            labels: [''],
-            datasets: [
-                {
-                    label: 'Budgeted',
-                    data: [budgetedIncome],
-                    backgroundColor: 'rgba(245, 245, 245, 1)',
-                    stack: 'stack1'
-                },
-                {
-                    label: 'Actual',
-                    data: [totalIncome],
-                    backgroundColor: 'rgba(63, 236, 63, 1)',
-                    stack: 'stack2'
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            indexAxis: 'y',
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    stacked: true,
-                    ticks: {
-                        color: '#ffffff',
-                        font: {
-                            family: 'Poppins',
-                            size: 14
-                        }
-                    }
-                },
-                y: {
-                    stacked: true,
-                    ticks: {
-                        color: '#ffffff',
-                        font: {
-                            family: 'Poppins',
-                            size: 16
-                        }
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    labels: {
-                        color: '#ffffff',
-                        font: {
-                            family: 'Poppins',
-                            size: 14
-                        }
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return context.dataset.label + ': ' + context.raw;
-                        }
-                    },
-                    bodyColor: '#ffffff',
-                    titleFont: {
-                        family: 'Poppins',
-                        size: 14
-                    },
-                    bodyFont: {
-                        family: 'Poppins',
-                        size: 12
-                    }
-                }
-            }
-        }
-    });
-
-    return incomeChart;
 };
 
 const populateMonthYearDropdown = (monthYears) => {

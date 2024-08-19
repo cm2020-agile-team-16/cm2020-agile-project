@@ -3,8 +3,8 @@ export const monthYearToString = (monthYear) => {
     return `${monthName} ${monthYear.year}`
 };
 
-export const fetchAllMonthYears = async () => {
-    const url = 'api/income-months';
+export const fetchIncomeMonthYears = async () => {
+    const url = 'api/income-month-years';
     const response = await fetch(url, {
         method: "GET",
     });
@@ -15,7 +15,19 @@ export const fetchAllMonthYears = async () => {
     }
 };
 
-export const fetchTransactions = async (monthYear) => {
+export const fetchExpensesMonthYears = async () => {
+    const url = 'api/expenses-month-years';
+    const response = await fetch(url, {
+        method: "GET",
+    });
+
+    if (response.ok) {
+        const dates = await response.json();
+        return dates;
+    }
+};
+
+export const fetchTransactionsForMonthYear = async (monthYear) => {
     const url = `api/transactions?month=${monthYear.month}&year=${monthYear.year}`;
     const response = await fetch(url, {
         method: "GET",

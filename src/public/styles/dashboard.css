@@ -1,0 +1,20 @@
+section#balance-card {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: linear-gradient(to bottom right, rgb(14, 158, 168), rgb(122, 215, 89));
+    width: 100%;
+    row-gap: 16px;
+    justify-content: space-evenly;
+    border-radius: 20px;
+    padding-bottom: 5%;
+    margin-bottom: 8%;
+}
+
+section#budget-plans {
+    display: flex;
+    flex-direction: column;
+    flex: 2;
+    width: 100%;
+    margin: 2% 0;
+}

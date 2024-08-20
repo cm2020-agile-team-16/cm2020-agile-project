@@ -69,7 +69,7 @@
         <div id="welcome">
             <span id="dashboard-header-text">
                 My Income
-                <select name="sort-key" id="month-year-dropdown" class="dropdown">
+                <select name="sort-key" id="month-year-dropdown" class="dropdown" onchange="onChangeMonthYearDropdown(this)">
                 </select>
             </span>
         </div>
@@ -109,7 +109,7 @@
                 <span id="section-title">Recent Incomes</span>
                 <div id="sort">
                     <span style="color: rgb(100, 100, 100)">Sort by</span>
-                    <select name="sort-key" class="dropdown">
+                    <select name="sort-key" class="dropdown" onchange="onChangeSortDropdown(this)">
                         <option value="latest" selected>Latest</option>
                         <option value="oldest">Oldest</option>
                         <option value="amount-desc">High-Low</option>
@@ -160,6 +160,8 @@
             onKeyDownSetBudgetDialog,
             onKeyDownSearchBar,
             onClickSearchBarFilterButton,
+            onChangeMonthYearDropdown,
+            onChangeSortDropdown,
         } from '../scripts/incomePage.js';
         window.onClickAddIncomeButton = onClickAddIncomeButton;
         window.onClickAddIncomeDialogCloseButton = onClickAddIncomeDialogCloseButton;
@@ -171,6 +173,8 @@
         window.onKeyDownSetBudgetDialog = onKeyDownSetBudgetDialog;
         window.onKeyDownSearchBar = onKeyDownSearchBar;
         window.onClickSearchBarFilterButton = onClickSearchBarFilterButton;
+        window.onChangeMonthYearDropdown = onChangeMonthYearDropdown;
+        window.onChangeSortDropdown = onChangeSortDropdown;
     </script>
     <script src="/scripts/navbar.js"></script>
 

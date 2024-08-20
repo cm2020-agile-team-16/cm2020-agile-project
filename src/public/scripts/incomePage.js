@@ -148,20 +148,19 @@ const populateMonthYearDropdown = (monthYears) => {
         option.text = monthYearToString(monthYear)
         dropdown.appendChild(option);
     });
+};
 
-    const onMonthYearDropdownChange = async () => {
-        // When the user selects a new month/year from the dropdown
-        // Update all HTML elements that care about month/date
-        const parts = dropdown.value.split('-');
-        currentMonthYear = {
-            month: parts[1],
-            year: parts[0]
-        };
 
-        await updatePage();
+export const onChangeMonthYearDropdown = async (element) => {
+    // When the user selects a new month/year from the dropdown
+    // Update all HTML elements that care about month/date
+    const parts = element.value.split('-');
+    currentMonthYear = {
+        month: parts[1],
+        year: parts[0]
     };
 
-    dropdown.addEventListener('change', onMonthYearDropdownChange);
+    await updatePage();
 };
 
 const populateAddIncomeDialogIncomeCategoryDropdown = (incomeCategories) => {
@@ -184,9 +183,24 @@ const populateSetBudgetDialogIncomeCategoryDropdown = (incomeCategories) => {
     });
 };
 
-const populateRecentIncomesList = (incomes, filter=undefined) => {
+const populateRecentIncomesList = (incomes, filter=undefined, sortKey='latest') => {
     const recentIncomesList = document.querySelector('section#recent-transactions div.transaction-list');
-    const newChildren = incomes.filter(income => filter ? income.source.includes(filter) : true).map(income => createTransactionElement(income));
+    const sortFunc = (income1, income2) => {
+        if (sortKey === 'latest' || sortKey == 'oldest') {
+            return new Date(income2) - new Date(income1);
+        } else if (sortKey === 'amount-desc') {
+            return income2.amount - income1.amount;
+        } else if (sortKey === 'amount-asc') {
+            return income1.amount - income2.amount;
+        }
+    };
+    let sortedFilteredIncomes = incomes
+        .filter(income => filter ? income.source.includes(filter) : true)
+        .toSorted(sortFunc)
+    if (sortKey === 'oldest') {
+        sortedFilteredIncomes = [...sortedFilteredIncomes].reverse();
+    }
+    const newChildren = sortedFilteredIncomes.map(income => createTransactionElement(income));
     recentIncomesList.replaceChildren(...newChildren);
 };
 
@@ -244,18 +258,28 @@ export const onKeyDownSetBudgetDialog = (element, event) => {
 
 export const onKeyDownSearchBar = async (element, event) => {
     if (event.key === 'Enter') {
-        const text = element.value;
-        await filterRecentIncomesList(text);
+        const filter = element.value;
+        await filterRecentIncomesList(filter);
     }
 };
 
 export const onClickSearchBarFilterButton = async () => {
     const searchBar = document.querySelector('section#search input#search-bar');
-    const text = searchBar.value;
-    await filterRecentIncomesList(text);
+    const filter = searchBar.value;
+    await filterRecentIncomesList(filter);
 };
 
-const filterRecentIncomesList = async (text) => {
+const filterRecentIncomesList = async (filter) => {
+    const sortDropdown = document.querySelector('section#recent-transactions select.dropdown');
+    const sortKey = sortDropdown.value;
     const currentTransactions = await fetchTransactionsForMonthYear(currentMonthYear);
-    populateRecentIncomesList(currentTransactions.incomes, text);
+    populateRecentIncomesList(currentTransactions.incomes, filter, sortKey);
+};
+
+export const onChangeSortDropdown = async (element) => {
+    const searchBar = document.querySelector('section#search input#search-bar');
+    const filter = searchBar.value;
+    const sortKey = element.value;
+    const currentTransactions = await fetchTransactionsForMonthYear(currentMonthYear);
+    populateRecentIncomesList(currentTransactions.incomes, filter, sortKey);
 };

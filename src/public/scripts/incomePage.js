@@ -9,22 +9,23 @@ import {
 
 
 let incomeCategoryChart = null;
+let currentMonthYear = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     const incomeMonthYears = await fetchIncomeMonthYears();
     const incomeCategories = await fetchAllIncomeCategories();
     // Set current month and year to most recent month and year
-    const monthYear = incomeMonthYears[0];
+    currentMonthYear = incomeMonthYears[0];
     populateMonthYearDropdown(incomeMonthYears);
     populateAddIncomeDialogIncomeCategoryDropdown(incomeCategories);
     populateSetBudgetDialogIncomeCategoryDropdown(incomeCategories);
 
-    await updatePage(monthYear);
+    await updatePage();
 });
 
-const updatePage = async (monthYear) => {
-    const currentTransactions = await fetchTransactionsForMonthYear(monthYear);
-    const budgetedIncome = await fetchBudgetedIncome(monthYear);
+const updatePage = async () => {
+    const currentTransactions = await fetchTransactionsForMonthYear(currentMonthYear);
+    const budgetedIncome = await fetchBudgetedIncome(currentMonthYear);
     const incomeCategories = await fetchAllIncomeCategories();
 
     populateRecentIncomesList(currentTransactions.incomes);
@@ -39,7 +40,7 @@ const updatePage = async (monthYear) => {
         currentTransactions.incomes,
         incomeCategories,
         budgetedIncome,
-        monthYear
+        currentMonthYear
     );
 };
 
@@ -152,12 +153,12 @@ const populateMonthYearDropdown = (monthYears) => {
         // When the user selects a new month/year from the dropdown
         // Update all HTML elements that care about month/date
         const parts = dropdown.value.split('-');
-        const monthYear = {
+        currentMonthYear = {
             month: parts[1],
             year: parts[0]
         };
 
-        await updatePage(monthYear);
+        await updatePage();
     };
 
     dropdown.addEventListener('change', onMonthYearDropdownChange);
@@ -183,9 +184,9 @@ const populateSetBudgetDialogIncomeCategoryDropdown = (incomeCategories) => {
     });
 };
 
-const populateRecentIncomesList = (incomes) => {
+const populateRecentIncomesList = (incomes, filter=undefined) => {
     const recentIncomesList = document.querySelector('section#recent-transactions div.transaction-list');
-    const newChildren = incomes.map(income => createTransactionElement(income));
+    const newChildren = incomes.filter(income => filter ? income.source.includes(filter) : true).map(income => createTransactionElement(income));
     recentIncomesList.replaceChildren(...newChildren);
 };
 
@@ -239,4 +240,22 @@ export const onKeyDownSetBudgetDialog = (element, event) => {
     if (event.key === 'Escape') {
         element.close();
     }
+};
+
+export const onKeyDownSearchBar = async (element, event) => {
+    if (event.key === 'Enter') {
+        const text = element.value;
+        await filterRecentIncomesList(text);
+    }
+};
+
+export const onClickSearchBarFilterButton = async () => {
+    const searchBar = document.querySelector('section#search input#search-bar');
+    const text = searchBar.value;
+    await filterRecentIncomesList(text);
+};
+
+const filterRecentIncomesList = async (text) => {
+    const currentTransactions = await fetchTransactionsForMonthYear(currentMonthYear);
+    populateRecentIncomesList(currentTransactions.incomes, text);
 };

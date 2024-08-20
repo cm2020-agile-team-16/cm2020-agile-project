@@ -98,8 +98,8 @@
         </section>
 
         <section class="flex-row" id="search">
-            <input class="icon-input icon-search" id="search-bar" placeholder="Search" />
-            <div id="search-filters" onclick="">
+            <input class="icon-input icon-search" id="search-bar" placeholder="Search" onkeydown="onKeyDownSearchBar(this, event)" />
+            <div id="search-filters" onclick="onClickSearchBarFilterButton()">
                 <span class="icon">tune</span>
             </div>
         </section>
@@ -158,6 +158,8 @@
             onClickSetBudgetDialogCloseButton,
             onClickSetBudgetDialog,
             onKeyDownSetBudgetDialog,
+            onKeyDownSearchBar,
+            onClickSearchBarFilterButton,
         } from '../scripts/incomePage.js';
         window.onClickAddIncomeButton = onClickAddIncomeButton;
         window.onClickAddIncomeDialogCloseButton = onClickAddIncomeDialogCloseButton;
@@ -167,6 +169,8 @@
         window.onClickSetBudgetDialogCloseButton = onClickSetBudgetDialogCloseButton;
         window.onClickSetBudgetDialog = onClickSetBudgetDialog;
         window.onKeyDownSetBudgetDialog = onKeyDownSetBudgetDialog;
+        window.onKeyDownSearchBar = onKeyDownSearchBar;
+        window.onClickSearchBarFilterButton = onClickSearchBarFilterButton;
     </script>
     <script src="/scripts/navbar.js"></script>
 

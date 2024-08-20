@@ -42,6 +42,29 @@
             </div>
         </form>
     </dialog>
+    <dialog
+    id="set-budget-dialog"
+    onclick="onClickSetBudgetDialog(this, event)"
+    onkeydown="onKeyDownSetBudgetDialog(this, event)"
+>
+    <div class="flex-row dialog-row-close">
+        <span class="icon" onclick="onClickSetBudgetDialogCloseButton()">close</span>
+    </div>
+    <form class="flex-row dialog-row-form" method="POST" action="/user/api/set-income-budget">
+        <div class="flex-row">
+            <label for="set-budget-dialog-category">Category</label>
+            <select id="set-budget-dialog-category" name="category">
+            </select>
+        </div>
+        <div class="flex-row">
+            <label for="set-budget-dialog-amount">Amount</label>
+            <input id="set-budget-dialog-amount" name="amount">
+        </div>
+        <div class="flex-row dialog-row-submit">
+            <button class="button" type="submit">Submit</button>
+        </div>
+    </form>
+</dialog>
     <header>
         <div id="welcome">
             <span id="dashboard-header-text">
@@ -68,7 +91,7 @@
                 <span class="icon">add_circle</span>
                 <span>Add Income</span>
             </div>
-            <div class="button">
+            <div class="button" onclick="onClickSetBudgetButton(this, event)">
                 <span class="icon">savings</span>
                 <span>Set budget</span>
             </div>
@@ -131,11 +154,19 @@
             onClickAddIncomeDialogCloseButton,
             onClickAddIncomeDialog,
             onKeyDownAddIncomeDialog,
+            onClickSetBudgetButton,
+            onClickSetBudgetDialogCloseButton,
+            onClickSetBudgetDialog,
+            onKeyDownSetBudgetDialog,
         } from '../scripts/incomePage.js';
         window.onClickAddIncomeButton = onClickAddIncomeButton;
         window.onClickAddIncomeDialogCloseButton = onClickAddIncomeDialogCloseButton;
         window.onClickAddIncomeDialog = onClickAddIncomeDialog;
         window.onKeyDownAddIncomeDialog = onKeyDownAddIncomeDialog;
+        window.onClickSetBudgetButton = onClickSetBudgetButton;
+        window.onClickSetBudgetDialogCloseButton = onClickSetBudgetDialogCloseButton;
+        window.onClickSetBudgetDialog = onClickSetBudgetDialog;
+        window.onKeyDownSetBudgetDialog = onKeyDownSetBudgetDialog;
     </script>
     <script src="/scripts/navbar.js"></script>
 

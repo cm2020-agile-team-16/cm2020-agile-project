@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const monthYear = incomeMonthYears[0];
     populateMonthYearDropdown(incomeMonthYears);
     populateAddIncomeDialogIncomeCategoryDropdown(incomeCategories);
+    populateSetBudgetDialogIncomeCategoryDropdown(incomeCategories);
 
     await updatePage(monthYear);
 });
@@ -172,6 +173,16 @@ const populateAddIncomeDialogIncomeCategoryDropdown = (incomeCategories) => {
     });
 };
 
+const populateSetBudgetDialogIncomeCategoryDropdown = (incomeCategories) => {
+    const dropdown = document.querySelector('dialog#set-budget-dialog select#set-budget-dialog-category');
+    incomeCategories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.id;
+        option.text = category.name;
+        dropdown.appendChild(option);
+    });
+};
+
 const populateRecentIncomesList = (incomes) => {
     const recentIncomesList = document.querySelector('section#recent-transactions div.transaction-list');
     const newChildren = incomes.map(income => createTransactionElement(income));
@@ -203,6 +214,28 @@ export const onClickAddIncomeDialog = (element, event) => {
 };
 
 export const onKeyDownAddIncomeDialog = (element, event) => {
+    if (event.key === 'Escape') {
+        element.close();
+    }
+};
+
+export const onClickSetBudgetButton = (element, event) => {
+    const dialog = document.querySelector('dialog#set-budget-dialog');
+    dialog.showModal();
+};
+
+export const onClickSetBudgetDialogCloseButton = () => {
+    const dialog = document.querySelector('dialog#set-budget-dialog');
+    dialog.close();
+};
+
+export const onClickSetBudgetDialog = (element, event) => {
+    if (clickedOutsideDialog(element, event)) {
+        element.close();
+    }
+};
+
+export const onKeyDownSetBudgetDialog = (element, event) => {
     if (event.key === 'Escape') {
         element.close();
     }

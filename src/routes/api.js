@@ -263,7 +263,7 @@ router.get('/budgeted-expenses', async (req, res) => {
 });
 
 /**
- * @desc API endpoint for adding an income to a user.
+ * @desc API endpoint for adding an income for a user.
  */
 router.post('/add-income', async (req, res) => {
     if (!req.session.userId) {
@@ -285,17 +285,15 @@ router.post('/add-income', async (req, res) => {
         (?,         ?,                  ?,      ?,      ?)
     `;
 
-    const category = req.body.category;
-    const source = req.body.source;
-    const amount = req.body.amount;
+    const { category, source, amount } = req.body;
+
     const d = new Date();
     const paddedMonth = (d.getMonth() + 1).toString().padStart(2, '0');
     const paddedDay = (d.getDate()).toString().padStart(2, '0');
     const date = `${d.getFullYear()}-${paddedMonth}-${paddedDay} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
-    console.log(userId, category, source, amount, date);
 
     try {
-        const result = await db.run(addIncomeQuery, [userId, category, source, amount, date]);
+        await db.run(addIncomeQuery, [userId, category, source, amount, date]);
         res.redirect(req.headers.referer);
     } catch (error) {
         console.error(error.message);
@@ -303,3 +301,40 @@ router.post('/add-income', async (req, res) => {
     }
 });
 
+/**
+ * @desc API endpoint for setting an income budget for a user.
+ */
+router.post('/set-income-budget', async (req, res) => {
+    if (!req.session.userId) {
+        res.sendStatus(401);
+        return;
+    }
+
+    const userId = req.session.userId;
+
+    const db = await open({
+        filename: "./database.db",
+        driver: sqlite3.Database,
+    });
+
+    const setIncomeBudgetQuery = `
+        INSERT OR REPLACE INTO incomeBudget
+        (user_id,   income_category_id, amount, month)
+        VALUES
+        (?,         ?,                  ?,      ?)
+    `;
+
+    const { category, amount } = req.body;
+
+    const d = new Date();
+    const paddedMonth = (d.getMonth() + 1).toString().padStart(2, '0');
+    const date = `${d.getFullYear()}-${paddedMonth}`;
+
+    try {
+        await db.run(setIncomeBudgetQuery, [userId, category, amount, date]);
+        res.redirect(req.headers.referer);
+    } catch (error) {
+        console.error(error.message);
+        res.sendStatus(500);
+    }
+});

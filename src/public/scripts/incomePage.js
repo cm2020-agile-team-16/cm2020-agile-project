@@ -1,7 +1,7 @@
 import {
     monthYearToString,
-    fetchAllMonthYears,
-    fetchTransactions,
+    fetchIncomeMonthYears,
+    fetchTransactionsForMonthYear,
     fetchAllIncomeCategories,
     fetchBudgetedIncome,
     createTransactionElement,
@@ -9,20 +9,23 @@ import {
 
 
 let incomeCategoryChart = null;
-let incomeChart = null;
+let currentMonthYear = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const monthYears = await fetchAllMonthYears();
+    const incomeMonthYears = await fetchIncomeMonthYears();
+    const incomeCategories = await fetchAllIncomeCategories();
     // Set current month and year to most recent month and year
-    const monthYear = monthYears[0];
-    populateMonthYearDropdown(monthYears);
+    currentMonthYear = incomeMonthYears[0];
+    populateMonthYearDropdown(incomeMonthYears);
+    populateAddIncomeDialogIncomeCategoryDropdown(incomeCategories);
+    populateSetBudgetDialogIncomeCategoryDropdown(incomeCategories);
 
-    await updatePage(monthYear);
+    await updatePage();
 });
 
-const updatePage = async (monthYear) => {
-    const currentTransactions = await fetchTransactions(monthYear);
-    const budgetedIncome = await fetchBudgetedIncome(monthYear);
+const updatePage = async () => {
+    const currentTransactions = await fetchTransactionsForMonthYear(currentMonthYear);
+    const budgetedIncome = await fetchBudgetedIncome(currentMonthYear);
     const incomeCategories = await fetchAllIncomeCategories();
 
     populateRecentIncomesList(currentTransactions.incomes);
@@ -33,24 +36,12 @@ const updatePage = async (monthYear) => {
         incomeCategoryChart = null;
     }
 
-    if (incomeChart) {
-        incomeChart.destroy();
-        incomeChart = null;
-    }
-
     incomeCategoryChart = renderIncomeCategoryChart(
         currentTransactions.incomes,
         incomeCategories,
         budgetedIncome,
-        monthYear
+        currentMonthYear
     );
-    /*
-    incomeChart = renderIncomeChart(
-        currentTransactions.incomes,
-        budgetedIncome,
-        monthYear
-    );
-    */
 };
 
 const renderIncomeCategoryChart = (
@@ -88,34 +79,29 @@ const renderIncomeCategoryChart = (
         return sum + category.total;
     }, 0);
 
-    const sortedCategoryPercentages = sortedCategoryTotals.map(({name, total}) => ({
-        name: name,
-        total: (total / totalIncomeBeforeExpenses) * 100,
-    }));
-
     const defaultIncomeCategoryBudgetMap = incomeCategories.reduce((accumulator, category) => {
         accumulator[category.name] = 0;
         return accumulator;
     }, {});
 
     const incomeCategoryBudgetMap = budgetedIncome.reduce((accumulator, budget) => {
-        accumulator[budget.category] = (budget.amount / totalIncomeBeforeExpenses) * 100;
+        accumulator[budget.category] = budget.amount;
         return accumulator;
     }, defaultIncomeCategoryBudgetMap);
 
     const incomeCategoryChart = new Chart(incomeCategoriesCtx, {
         type: 'bar',
         data: {
-            labels: sortedCategoryPercentages.map(category => category.name),
+            labels: sortedCategoryTotals.map(category => category.name),
             datasets: [
                 {
                     label: 'Actual',
-                    data: sortedCategoryPercentages.map(category => category.total),
+                    data: sortedCategoryTotals.map(category => category.total),
                     backgroundColor: 'rgba(63, 236, 63, 1)',
                 },
                 {
                     label: 'Budgeted',
-                    data: sortedCategoryPercentages.map(category => incomeCategoryBudgetMap[category.name]),
+                    data: sortedCategoryTotals.map(category => incomeCategoryBudgetMap[category.name]),
                     backgroundColor: 'rgba(245, 245, 245, 1)',
                 },
             ],
@@ -131,10 +117,9 @@ const renderIncomeCategoryChart = (
                 y: {
                     beginAtZero: true,
                     min: 0,
-                    max: 100,
                     ticks: {
                         callback: function(value) {
-                            return value + '%';
+                            return value.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
                         }
                     }
                 }
@@ -143,7 +128,8 @@ const renderIncomeCategoryChart = (
                 tooltip: {
                     callbacks: {
                         label: (tooltipItem) => {
-                            return `${tooltipItem.dataset.label}: ${tooltipItem.raw.toFixed(2)}%`;
+                            const amount = tooltipItem.raw.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+                            return `${tooltipItem.dataset.label}: ${amount}`;
                         },
                     },
                 },
@@ -154,96 +140,6 @@ const renderIncomeCategoryChart = (
     return incomeCategoryChart;
 };
 
-const renderIncomeChart = (currentIncomes, budgetedIncome, monthYear) => {
-    const incomeChartSection = document.querySelector('section#income-chart-section');
-    const sectionTitle = incomeChartSection.querySelector('span.section-title');
-    const incomeCtx = incomeChartSection.querySelector('canvas#income-chart').getContext('2d');
-
-    sectionTitle.textContent = `Income for ${monthYearToString(monthYear)}`;
-
-    const totalIncome = currentIncomes.reduce((accumulator, income) => {
-        accumulator += income.amount;
-        return accumulator;
-    }, 0);
-
-    const incomeChart = new Chart(incomeCtx, {
-        type: 'bar',
-        data: {
-            labels: [''],
-            datasets: [
-                {
-                    label: 'Budgeted',
-                    data: [budgetedIncome],
-                    backgroundColor: 'rgba(245, 245, 245, 1)',
-                    stack: 'stack1'
-                },
-                {
-                    label: 'Actual',
-                    data: [totalIncome],
-                    backgroundColor: 'rgba(63, 236, 63, 1)',
-                    stack: 'stack2'
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            indexAxis: 'y',
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    stacked: true,
-                    ticks: {
-                        color: '#ffffff',
-                        font: {
-                            family: 'Poppins',
-                            size: 14
-                        }
-                    }
-                },
-                y: {
-                    stacked: true,
-                    ticks: {
-                        color: '#ffffff',
-                        font: {
-                            family: 'Poppins',
-                            size: 16
-                        }
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    labels: {
-                        color: '#ffffff',
-                        font: {
-                            family: 'Poppins',
-                            size: 14
-                        }
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return context.dataset.label + ': ' + context.raw;
-                        }
-                    },
-                    bodyColor: '#ffffff',
-                    titleFont: {
-                        family: 'Poppins',
-                        size: 14
-                    },
-                    bodyFont: {
-                        family: 'Poppins',
-                        size: 12
-                    }
-                }
-            }
-        }
-    });
-
-    return incomeChart;
-};
-
 const populateMonthYearDropdown = (monthYears) => {
     const dropdown = document.querySelector('select#month-year-dropdown');
     monthYears.forEach(monthYear => {
@@ -252,24 +148,138 @@ const populateMonthYearDropdown = (monthYears) => {
         option.text = monthYearToString(monthYear)
         dropdown.appendChild(option);
     });
-
-    const onMonthYearDropdownChange = async () => {
-        // When the user selects a new month/year from the dropdown
-        // Update all HTML elements that care about month/date
-        const parts = dropdown.value.split('-');
-        const monthYear = {
-            month: parts[1],
-            year: parts[0]
-        };
-
-        await updatePage(monthYear);
-    };
-
-    dropdown.addEventListener('change', onMonthYearDropdownChange);
 };
 
-const populateRecentIncomesList = (incomes) => {
+
+export const onChangeMonthYearDropdown = async (element) => {
+    // When the user selects a new month/year from the dropdown
+    // Update all HTML elements that care about month/date
+    const parts = element.value.split('-');
+    currentMonthYear = {
+        month: parts[1],
+        year: parts[0]
+    };
+
+    await updatePage();
+};
+
+const populateAddIncomeDialogIncomeCategoryDropdown = (incomeCategories) => {
+    const dropdown = document.querySelector('dialog#add-income-dialog select#add-income-dialog-category');
+    incomeCategories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.id;
+        option.text = category.name;
+        dropdown.appendChild(option);
+    });
+};
+
+const populateSetBudgetDialogIncomeCategoryDropdown = (incomeCategories) => {
+    const dropdown = document.querySelector('dialog#set-budget-dialog select#set-budget-dialog-category');
+    incomeCategories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.id;
+        option.text = category.name;
+        dropdown.appendChild(option);
+    });
+};
+
+const populateRecentIncomesList = (incomes, filter=undefined, sortKey='latest') => {
     const recentIncomesList = document.querySelector('section#recent-transactions div.transaction-list');
-    const newChildren = incomes.map(income => createTransactionElement(income));
+    const sortFunc = (income1, income2) => {
+        if (sortKey === 'latest' || sortKey == 'oldest') {
+            return new Date(income2) - new Date(income1);
+        } else if (sortKey === 'amount-desc') {
+            return income2.amount - income1.amount;
+        } else if (sortKey === 'amount-asc') {
+            return income1.amount - income2.amount;
+        }
+    };
+    let sortedFilteredIncomes = incomes
+        .filter(income => filter ? income.source.includes(filter) : true)
+        .toSorted(sortFunc)
+    if (sortKey === 'oldest') {
+        sortedFilteredIncomes = [...sortedFilteredIncomes].reverse();
+    }
+    const newChildren = sortedFilteredIncomes.map(income => createTransactionElement(income));
     recentIncomesList.replaceChildren(...newChildren);
+};
+
+export const onClickAddIncomeButton = (element, event) => {
+    const dialog = document.querySelector('dialog#add-income-dialog');
+    dialog.showModal();
+};
+
+const clickedOutsideDialog = (element, event) => {
+    const rect = element.getBoundingClientRect();
+    const isInY = (rect.top <= event.clientY && event.clientY <= rect.top + rect.height);
+    const isInX = (rect.left <= event.clientX && event.clientX <= rect.left + rect.width);
+    const isInDialog = isInY && isInX;
+    return !isInDialog;
+};
+
+export const onClickAddIncomeDialogCloseButton = () => {
+    const dialog = document.querySelector('dialog#add-income-dialog');
+    dialog.close();
+};
+
+export const onClickAddIncomeDialog = (element, event) => {
+    if (clickedOutsideDialog(element, event)) {
+        element.close();
+    }
+};
+
+export const onKeyDownAddIncomeDialog = (element, event) => {
+    if (event.key === 'Escape') {
+        element.close();
+    }
+};
+
+export const onClickSetBudgetButton = (element, event) => {
+    const dialog = document.querySelector('dialog#set-budget-dialog');
+    dialog.showModal();
+};
+
+export const onClickSetBudgetDialogCloseButton = () => {
+    const dialog = document.querySelector('dialog#set-budget-dialog');
+    dialog.close();
+};
+
+export const onClickSetBudgetDialog = (element, event) => {
+    if (clickedOutsideDialog(element, event)) {
+        element.close();
+    }
+};
+
+export const onKeyDownSetBudgetDialog = (element, event) => {
+    if (event.key === 'Escape') {
+        element.close();
+    }
+};
+
+export const onKeyDownSearchBar = async (element, event) => {
+    if (event.key === 'Enter') {
+        const filter = element.value;
+        await filterRecentIncomesList(filter);
+    }
+};
+
+export const onClickSearchBarFilterButton = async () => {
+    const searchBar = document.querySelector('section#search input#search-bar');
+    const filter = searchBar.value;
+    await filterRecentIncomesList(filter);
+};
+
+const filterRecentIncomesList = async (filter) => {
+    const sortDropdown = document.querySelector('section#recent-transactions select.dropdown');
+    const sortKey = sortDropdown.value;
+    const currentTransactions = await fetchTransactionsForMonthYear(currentMonthYear);
+    populateRecentIncomesList(currentTransactions.incomes, filter, sortKey);
+};
+
+export const onChangeSortDropdown = async (element) => {
+    const searchBar = document.querySelector('section#search input#search-bar');
+    const filter = searchBar.value;
+    const sortKey = element.value;
+    const currentTransactions = await fetchTransactionsForMonthYear(currentMonthYear);
+    populateRecentIncomesList(currentTransactions.incomes, filter, sortKey);
 };

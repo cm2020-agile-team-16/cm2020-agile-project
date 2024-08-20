@@ -12,9 +12,11 @@ let incomeCategoryChart = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     const incomeMonthYears = await fetchIncomeMonthYears();
+    const incomeCategories = await fetchAllIncomeCategories();
     // Set current month and year to most recent month and year
     const monthYear = incomeMonthYears[0];
     populateMonthYearDropdown(incomeMonthYears);
+    populateAddIncomeDialogIncomeCategoryDropdown(incomeCategories);
 
     await updatePage(monthYear);
 });
@@ -160,8 +162,48 @@ const populateMonthYearDropdown = (monthYears) => {
     dropdown.addEventListener('change', onMonthYearDropdownChange);
 };
 
+const populateAddIncomeDialogIncomeCategoryDropdown = (incomeCategories) => {
+    const dropdown = document.querySelector('dialog#add-income-dialog select#add-income-dialog-category');
+    incomeCategories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.id;
+        option.text = category.name;
+        dropdown.appendChild(option);
+    });
+};
+
 const populateRecentIncomesList = (incomes) => {
     const recentIncomesList = document.querySelector('section#recent-transactions div.transaction-list');
     const newChildren = incomes.map(income => createTransactionElement(income));
     recentIncomesList.replaceChildren(...newChildren);
+};
+
+export const onClickAddIncomeButton = (element, event) => {
+    const dialog = document.querySelector('dialog#add-income-dialog');
+    dialog.showModal();
+};
+
+const clickedOutsideDialog = (element, event) => {
+    const rect = element.getBoundingClientRect();
+    const isInY = (rect.top <= event.clientY && event.clientY <= rect.top + rect.height);
+    const isInX = (rect.left <= event.clientX && event.clientX <= rect.left + rect.width);
+    const isInDialog = isInY && isInX;
+    return !isInDialog;
+};
+
+export const onClickAddIncomeDialogCloseButton = () => {
+    const dialog = document.querySelector('dialog#add-income-dialog');
+    dialog.close();
+};
+
+export const onClickAddIncomeDialog = (element, event) => {
+    if (clickedOutsideDialog(element, event)) {
+        element.close();
+    }
+};
+
+export const onKeyDownAddIncomeDialog = (element, event) => {
+    if (event.key === 'Escape') {
+        element.close();
+    }
 };

@@ -171,7 +171,7 @@ router.get('/income-categories', async (req, res) => {
         driver: sqlite3.Database,
     });
 
-    const incomeCategoriesQuery = `SELECT name FROM incomeCategory`;
+    const incomeCategoriesQuery = `SELECT income_category_id AS id, name FROM incomeCategory`;
 
     try {
         const incomeCategories = (await db.all(incomeCategoriesQuery));
@@ -261,3 +261,45 @@ router.get('/budgeted-expenses', async (req, res) => {
         res.sendStatus(500);
     }
 });
+
+/**
+ * @desc API endpoint for adding an income to a user.
+ */
+router.post('/add-income', async (req, res) => {
+    if (!req.session.userId) {
+        res.sendStatus(401);
+        return;
+    }
+
+    const userId = req.session.userId;
+
+    const db = await open({
+        filename: "./database.db",
+        driver: sqlite3.Database,
+    });
+
+    const addIncomeQuery = `
+        INSERT INTO income
+        (user_id,   income_category_id, source, amount, date)
+        VALUES
+        (?,         ?,                  ?,      ?,      ?)
+    `;
+
+    const category = req.body.category;
+    const source = req.body.source;
+    const amount = req.body.amount;
+    const d = new Date();
+    const paddedMonth = (d.getMonth() + 1).toString().padStart(2, '0');
+    const paddedDay = (d.getDate()).toString().padStart(2, '0');
+    const date = `${d.getFullYear()}-${paddedMonth}-${paddedDay} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+    console.log(userId, category, source, amount, date);
+
+    try {
+        const result = await db.run(addIncomeQuery, [userId, category, source, amount, date]);
+        res.redirect(req.headers.referer);
+    } catch (error) {
+        console.error(error.message);
+        res.sendStatus(500);
+    }
+});
+

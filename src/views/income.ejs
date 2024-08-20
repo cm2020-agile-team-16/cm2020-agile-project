@@ -8,12 +8,40 @@
     <title>Dashboard - <%= app_name %></title>
     <!-- LINK TO STYLESHEETS / GOOGLE FONTS -->
     <link rel="stylesheet" href="/styles/common.css">
+    <link rel="stylesheet" href="/styles/income.css">
     <link rel="stylesheet" href="/styles/icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
 </head>
 
 <body>
+    <dialog
+        id="add-income-dialog"
+        onclick="onClickAddIncomeDialog(this, event)"
+        onkeydown="onKeyDownAddIncomeDialog(this, event)"
+    >
+        <div class="flex-row dialog-row-close">
+            <span class="icon" onclick="onClickAddIncomeDialogCloseButton()">close</span>
+        </div>
+        <form class="flex-row dialog-row-form" method="POST" action="/user/api/add-income">
+            <div class="flex-row">
+                <label for="add-income-dialog-source">Source</label>
+                <input id="add-income-dialog-source" name="source">
+            </div>
+            <div class="flex-row">
+                <label for="add-income-dialog-category">Category</label>
+                <select id="add-income-dialog-category" name="category">
+                </select>
+            </div>
+            <div class="flex-row">
+                <label for="add-income-dialog-amount">Amount</label>
+                <input id="add-income-dialog-amount" name="amount">
+            </div>
+            <div class="flex-row dialog-row-submit">
+                <button class="button" type="submit">Submit</button>
+            </div>
+        </form>
+    </dialog>
     <header>
         <div id="welcome">
             <span id="dashboard-header-text">
@@ -35,9 +63,15 @@
             <canvas id="income-categories-chart" width="1000" height="200"></canvas>
         </section>
 
-        <section id="income-chart-section">
-            <span class="section-title"></span>
-            <canvas id="income-chart" width="1000" height="200"></canvas>
+        <section id="add-income-section">
+            <div class="button" onclick="onClickAddIncomeButton(this, event)">
+                <span class="icon">add_circle</span>
+                <span>Add Income</span>
+            </div>
+            <div class="button">
+                <span class="icon">savings</span>
+                <span>Set budget</span>
+            </div>
         </section>
 
         <section class="flex-row" id="search">
@@ -91,7 +125,18 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/scripts/incomePage.js" type="module"></script>
+    <script type="module">
+        import {
+            onClickAddIncomeButton,
+            onClickAddIncomeDialogCloseButton,
+            onClickAddIncomeDialog,
+            onKeyDownAddIncomeDialog,
+        } from '../scripts/incomePage.js';
+        window.onClickAddIncomeButton = onClickAddIncomeButton;
+        window.onClickAddIncomeDialogCloseButton = onClickAddIncomeDialogCloseButton;
+        window.onClickAddIncomeDialog = onClickAddIncomeDialog;
+        window.onKeyDownAddIncomeDialog = onKeyDownAddIncomeDialog;
+    </script>
     <script src="/scripts/navbar.js"></script>
 
 </body>

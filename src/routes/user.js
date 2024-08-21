@@ -422,6 +422,123 @@ router.get('/summary', async (req, res) => {
 /**
  * @desc Renders the expenses page
  */
+// router.get('/expenses', async (req, res) => {
+//     // redirect user to login if no session is found
+//     if (!req.session.userId) {
+//         console.log('No user ID found in session, redirecting to login'); // Debug log
+//         return res.redirect('/account/login');
+//     }
+
+//     // save user's ID
+//     const userId = req.session.userId;
+
+//     const db = await open({
+//         filename: "./database.db",
+//         driver: sqlite3.Database,
+//     });
+
+//     // const totalIncomeQuery = `SELECT COALESCE(SUM(amount), 0) AS totalIncome FROM income WHERE user_id = ? AND substr(date, 1, 4) = ? AND substr(date, 6, 2) = ?`;
+
+//     const totalExpenseQuery = `SELECT COALESCE(SUM(amount), 0) AS totalExpenses FROM expenses WHERE user_id = ? AND substr(date, 1, 4) = ? AND substr(date, 6, 2) = ?`;
+
+//     const budgetedExpenseQuery = `SELECT COALESCE(SUM(amount), 0) AS budgetedExpenses FROM expenseBudget WHERE user_id = ?`;
+
+//     // create query to retrieve user's budgeted income
+//     // const budgetedIncomeQuery = `SELECT COALESCE(SUM(amount), 0) AS budgetedIncome FROM incomeBudget WHERE user_id = ?`;
+
+// //     const recentTransactionsQuery = `
+// //     SELECT * FROM (
+// //     SELECT 'income' AS type, source, amount, date, IC.name AS category, IC.icon AS icon
+// //     FROM income I
+// //     JOIN incomeCategory IC ON I.income_category_id = IC.income_category_id
+// //     WHERE I.user_id = ?
+// //     UNION
+// //     SELECT 'expense' AS type, source, amount, date, EC.name AS category, EC.icon AS icon
+// //     FROM expenses E
+// //     JOIN expenseCategory EC ON E.expense_category_id = EC.expense_category_id
+// //     WHERE E.user_id = ?
+// // )
+// // ORDER BY date DESC LIMIT 10`;
+
+// const expenseQuery = `
+//     SELECT * FROM (
+//     SELECT 'expense' AS type, source, amount, date, IC.name AS category, IC.icon AS icon
+//     FROM expenses I
+//     JOIN expenseCategory IC ON I.expense_category_id = IC.expense_category_id
+//     WHERE I.user_id = ?
+//     )
+//     ORDER BY date DESC
+// `;
+// const expenseCategoriesQuery = `SELECT name FROM expenseCategory`;
+
+//     let recentTransactions;
+//     let totalExpense;
+//     let budgetedExpense;
+//     let expenseCategories;
+//     let expense;
+//     // let totalIncome;
+//     // let budgetedIncome;
+
+//     let most_recent_date = new Date();
+//     let year = most_recent_date.toLocaleString("en-US", { year: "numeric" });
+
+//     // try {
+//     //     recentTransactions = await db.all(recentTransactionsQuery, [userId, userId]);
+//     //     // Determine which month we're in by looking at most recent transaction date
+//     //     if (recentTransactions) {
+//     //         most_recent_date = new Date(recentTransactions[0].date);
+//     //     }
+//     //     const paddedMonth = (most_recent_date.getMonth() + 1).toString().padStart(2, "0");
+//     //     year = most_recent_date.toLocaleString("en-US", { year: "numeric" });
+//     //     totalIncome = (await db.get(totalIncomeQuery, [userId, year, paddedMonth])).totalIncome;
+//     //     totalExpenses = (await db.get(totalExpensesQuery, [userId, year, paddedMonth])).totalExpenses;
+//     //     budgetedIncome = (await db.get(budgetedIncomeQuery, [userId])).budgetedIncome;
+//     //     budgetedExpenses = (await db.get(budgetedExpensesQuery, [userId])).budgetedExpenses;
+//     // } catch (error) {
+//     //     console.error(error.message);
+//     //     return res.sendStatus(500);
+//     // }
+
+//     try {
+//         expense = await db.all(expenseQuery, [userId]);
+//         // Determine which month we're in by looking at most recent transaction date
+//         if (expense) {
+//             most_recent_date = new Date(expense[0].date);
+//         }
+//         const paddedMonth = (most_recent_date.getMonth() + 1).toString().padStart(2, "0");
+//         year = most_recent_date.toLocaleString("en-US", { year: "numeric" })
+
+//         totalExpense = (await db.get(totalExpenseQuery, [userId, year, paddedMonth])).totalExpense;
+//         budgetedExpense = (await db.get(budgetedExpenseQuery, [userId])).budgetedExpense;
+//         expenseCategories = (await db.all(expenseCategoriesQuery))
+//     } catch (error) {
+//         console.error(error.message);
+//         return res.sendStatus(500);
+//     }
+
+
+//     // const isPartOfCurrentDate = (transaction) => {
+//     //     const transactionDate = new Date(transaction.date);
+//     //     const isCurrentMonth = transactionDate.getMonth() === most_recent_date.getMonth();
+//     //     const isCurrentYear = transactionDate.getFullYear() === most_recent_date.getFullYear();
+//     //     return isCurrentMonth && isCurrentYear;
+//     // };
+    
+//     // const monthlyExpense = recentTransactions.filter(transaction => transaction.type === "expense").filter(isPartOfCurrentDate);
+//     const month = most_recent_date.toLocaleString("en-US", { month: "long" });
+
+//     res.render('expenses', {
+//         budgetedExpense,
+//         totalExpense,
+//         expense,
+//         budgetedExpense,
+//         expenseCategories,
+//         year,
+//         month
+//         // monthlyExpense
+//     });
+// });
+
 router.get('/expenses', async (req, res) => {
     // redirect user to login if no session is found
     if (!req.session.userId) {
@@ -437,72 +554,63 @@ router.get('/expenses', async (req, res) => {
         driver: sqlite3.Database,
     });
 
-    const totalIncomeQuery = `SELECT COALESCE(SUM(amount), 0) AS totalIncome FROM income WHERE user_id = ? AND substr(date, 1, 4) = ? AND substr(date, 6, 2) = ?`;
-
-    const totalExpensesQuery = `SELECT COALESCE(SUM(amount), 0) AS totalExpenses FROM expenses WHERE user_id = ? AND substr(date, 1, 4) = ? AND substr(date, 6, 2) = ?`;
-
-    const budgetedExpensesQuery = `SELECT COALESCE(SUM(amount), 0) AS budgetedExpenses FROM expenseBudget WHERE user_id = ?`;
+    // create query to retrieve user's total income
+    // totalIncomeQuery
+    const totalExpenseQuery = `SELECT COALESCE(SUM(amount), 0) AS totalExpenses FROM expenses WHERE user_id = ? AND substr(date, 1, 4) = ? AND substr(date, 6, 2) = ?`;
 
     // create query to retrieve user's budgeted income
-    const budgetedIncomeQuery = `SELECT COALESCE(SUM(amount), 0) AS budgetedIncome FROM incomeBudget WHERE user_id = ?`;
+    // budgetedIncomeQuery
+    const budgetedExpenseQuery = `SELECT COALESCE(SUM(amount), 0) AS budgetedExpenses FROM expenseBudget WHERE user_id = ?`;
 
-    const recentTransactionsQuery = `
-    SELECT * FROM (
-    SELECT 'income' AS type, source, amount, date, IC.name AS category, IC.icon AS icon
-    FROM income I
-    JOIN incomeCategory IC ON I.income_category_id = IC.income_category_id
-    WHERE I.user_id = ?
-    UNION
-    SELECT 'expense' AS type, source, amount, date, EC.name AS category, EC.icon AS icon
-    FROM expenses E
-    JOIN expenseCategory EC ON E.expense_category_id = EC.expense_category_id
-    WHERE E.user_id = ?
-)
-ORDER BY date DESC LIMIT 10`;
+    // create query to retrieve user's recent transactions
+    // incomesQuery
+    const expensesQuery = `
+        SELECT * FROM (
+        SELECT 'expenses' AS type, source, amount, date, IC.name AS category, IC.icon AS icon
+        FROM expenses I
+        JOIN expenseCategory IC ON I.expense_category_id = IC.expense_category_id
+        WHERE I.user_id = ?
+        )
+        ORDER BY date DESC
+    `;
 
-    let recentTransactions;
-    let totalExpenses;
-    let budgetedExpenses;
-    let totalIncome;
-    let budgetedIncome;
+    //incomeCategoriesQuery
+    const expenseCategoriesQuery = `SELECT name FROM expenseCategory`; 
+
+    let expenses; //incomes
+    let totalExpenses; //totalIncome
+    let budgetedExpenses; //budgetedIncome
+    let expenseCategories; //incomeCategories
 
     let most_recent_date = new Date();
     let year = most_recent_date.toLocaleString("en-US", { year: "numeric" });
 
     try {
-        recentTransactions = await db.all(recentTransactionsQuery, [userId, userId]);
+        expenses = await db.all(expensesQuery, [userId]);
         // Determine which month we're in by looking at most recent transaction date
-        if (recentTransactions) {
-            most_recent_date = new Date(recentTransactions[0].date);
+        if (expenses) {
+            most_recent_date = new Date(expenses[0].date);
         }
         const paddedMonth = (most_recent_date.getMonth() + 1).toString().padStart(2, "0");
-        year = most_recent_date.toLocaleString("en-US", { year: "numeric" });
-        totalIncome = (await db.get(totalIncomeQuery, [userId, year, paddedMonth])).totalIncome;
-        totalExpenses = (await db.get(totalExpensesQuery, [userId, year, paddedMonth])).totalExpenses;
-        budgetedIncome = (await db.get(budgetedIncomeQuery, [userId])).budgetedIncome;
-        budgetedExpenses = (await db.get(budgetedExpensesQuery, [userId])).budgetedExpenses;
+        year = most_recent_date.toLocaleString("en-US", { year: "numeric" })
+
+        totalExpenses = (await db.get(totalExpenseQuery, [userId, year, paddedMonth])).totalExpense;
+        budgetedExpenses = (await db.get(budgetedExpenseQuery, [userId])).budgetedExpense;
+        expenseCategories = (await db.all(expenseCategoriesQuery))
     } catch (error) {
         console.error(error.message);
         return res.sendStatus(500);
     }
 
-    const isPartOfCurrentDate = (transaction) => {
-        const transactionDate = new Date(transaction.date);
-        const isCurrentMonth = transactionDate.getMonth() === most_recent_date.getMonth();
-        const isCurrentYear = transactionDate.getFullYear() === most_recent_date.getFullYear();
-        return isCurrentMonth && isCurrentYear;
-    };
-    
-    const monthlyExpenses = recentTransactions.filter(transaction => transaction.type === "expense").filter(isPartOfCurrentDate);
     const month = most_recent_date.toLocaleString("en-US", { month: "long" });
 
+    // if there are no errors, load the user's dashboard
     res.render('expenses', {
-        budgetedExpenses,
-        budgetedIncome,
-        totalExpenses,
-        totalIncome,
-        year,
         month,
-        monthlyExpenses
+        year,
+        totalExpenses,
+        budgetedExpenses,
+        expenses,
+        expenseCategories,
     });
 });

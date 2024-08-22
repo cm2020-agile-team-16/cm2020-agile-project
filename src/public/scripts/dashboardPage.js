@@ -4,7 +4,7 @@ import {
     fetchExpensesMonthYears,
     fetchTransactionsForMonthYear,
     fetchBudgetedIncome,
-    fetchBudgetedExpenses,
+    fetchExpenseLimits,
     createTransactionElement,
 } from "./commonPageHelpers.js";
 
@@ -27,22 +27,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const currentTransactions = await fetchTransactionsForMonthYear(monthYear);
     const budgetedIncomesThisMonth = await fetchBudgetedIncome(monthYear);
-    const budgetedExpensesThisMonth = await fetchBudgetedExpenses(monthYear);
+    const expenseLimitsThisMonth = await fetchExpenseLimits(monthYear);
 
     const totalBudgetedIncome = budgetedIncomesThisMonth.reduce((accumulator, budget) => {
         accumulator += budget.amount;
         return accumulator;
     }, 0);
 
-    const totalBudgetedExpenses = budgetedExpensesThisMonth.reduce((accumulator, budget) => {
-        accumulator += budget.amount;
+    const totalExpenseLimits = expenseLimitsThisMonth.reduce((accumulator, limit) => {
+        accumulator += limit.amount;
         return accumulator;
     }, 0);
 
     await updatePage(
         currentTransactions,
         totalBudgetedIncome,
-        totalBudgetedExpenses,
+        totalExpenseLimits,
         monthYear,
     );
 });
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 const updatePage = async (
     currentTransactions,
     totalBudgetedIncome,
-    totalBudgetedExpenses,
+    totalExpenseLimits,
     monthYear,
 ) => {
     const allTransactions = [...currentTransactions.incomes, ...currentTransactions.expenses];
@@ -79,7 +79,7 @@ const updatePage = async (
 
     expensesChart = renderExpensesChart(
         currentTransactions.expenses,
-        totalBudgetedExpenses,
+        totalExpenseLimits,
     );
 };
 
@@ -170,7 +170,7 @@ const renderIncomesChart = (currentIncomes, totalBudgetedIncome) => {
     return incomesChart;
 };
 
-const renderExpensesChart = (currentExpenses, totalBudgetedExpenses) => {
+const renderExpensesChart = (currentExpenses, totalExpenseLimits) => {
     const budgetPlansSection = document.querySelector('section#budget-plans-section');
     const context = budgetPlansSection.querySelector('canvas#expenses-chart').getContext('2d');
 
@@ -185,8 +185,8 @@ const renderExpensesChart = (currentExpenses, totalBudgetedExpenses) => {
             labels: [''],
             datasets: [
                 {
-                    label: 'Budgeted',
-                    data: [totalBudgetedExpenses],
+                    label: 'Limit',
+                    data: [totalExpenseLimits],
                     backgroundColor: 'rgba(245, 245, 245, 1)',
                     stack: 'stack1'
                 },

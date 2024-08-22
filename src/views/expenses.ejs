@@ -7,6 +7,7 @@
     <!-- TAB TITLE -->
     <title>Dashboard - <%= app_name %></title>
     <!-- LINK TO STYLESHEETS / GOOGLE FONTS -->
+    <link rel="stylesheet" href="/styles/common.css">
     <link rel="stylesheet" href="/styles/expenses.css">
     <link rel="stylesheet" href="/styles/icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -14,9 +15,63 @@
 </head>
 
 <body>
+    <dialog
+        id="add-expense-dialog"
+        onclick="onClickAddExpenseDialog(this, event)"
+        onkeydown="onKeyDownAddExpenseDialog(this, event)"
+    >
+        <div class="flex-row dialog-row-close">
+            <span class="icon" onclick="onClickAddExpenseDialogCloseButton()">close</span>
+        </div>
+        <form class="flex-row dialog-row-form" method="POST" action="/user/api/add-expense">
+            <div class="flex-row">
+                <label for="add-expense-dialog-source">Source</label>
+                <input id="add-expense-dialog-source" name="source">
+            </div>
+            <div class="flex-row">
+                <label for="add-expense-dialog-category">Category</label>
+                <select id="add-expense-dialog-category" name="category">
+                </select>
+            </div>
+            <div class="flex-row">
+                <label for="add-expense-dialog-amount">Amount</label>
+                <input id="add-expense-dialog-amount" name="amount">
+            </div>
+            <div class="flex-row dialog-row-submit">
+                <button class="button" type="submit">Submit</button>
+            </div>
+        </form>
+    </dialog>
+    <dialog
+    id="set-limit-dialog"
+    onclick="onClickSetLimitDialog(this, event)"
+    onkeydown="onKeyDownSetLimitDialog(this, event)"
+>
+    <div class="flex-row dialog-row-close">
+        <span class="icon" onclick="onClickSetLimitDialogCloseButton()">close</span>
+    </div>
+    <form class="flex-row dialog-row-form" method="POST" action="/user/api/set-expense-limit">
+        <div class="flex-row">
+            <label for="set-limit-dialog-category">Category</label>
+            <select id="set-limit-dialog-category" name="category">
+            </select>
+        </div>
+        <div class="flex-row">
+            <label for="set-limit-dialog-amount">Amount</label>
+            <input id="set-limit-dialog-amount" name="amount">
+        </div>
+        <div class="flex-row dialog-row-submit">
+            <button class="button" type="submit">Submit</button>
+        </div>
+    </form>
+    </dialog>
     <header>
         <div id="welcome">
-            <span id="dashboard-header-text">My Expenses</span>
+            <span id="header-text">
+                My Expenses
+                <select name="sort-key" id="month-year-dropdown" class="dropdown" onchange="onChangeMonthYearDropdown(this)">
+                </select>
+            </span>
         </div>
         <div id="profile">
             <img id="profile-picture" src="/assets/images/pfp.png" onclick="window.location.href = '/account/profile/'" alt="profile picture">
@@ -26,43 +81,34 @@
 
     <main id="flex">
         <section id="expense-categories-chart-section">
-            <span id="section-title">Expense Categories for <b><%= month %> <%= year %></b></span>
+            <span class="section-title"></span>
             <canvas id="expense-categories-chart" width="1000" height="200"></canvas>
-            <div class="data"
-                data-budgeted-expenses="<%= budgetedExpenses %>"
-                data-total-expenses="<%= totalExpenses %>"
-            >
-                <div>
-                    <%= JSON.stringify(expenses) %>
-                </div>
-                <div>
-                    <%= JSON.stringify(expenseCategories) %>
-                </div>
-            </div>
         </section>
 
-        <section id="expense-chart-section">
-            <canvas id="expense-chart" width="1000" height="200"></canvas>
-            <div class="data"
-                data-budgeted-expenses="<%= budgetedExpenses %>"
-                data-total-expenses="<%= totalExpenses %>"
-            >
+        <section id="add-expense-section">
+            <div class="button" onclick="onClickAddExpenseButton(this, event)">
+                <span class="icon">add_circle</span>
+                <span>Add Expense</span>
+            </div>
+            <div class="button" onclick="onClickSetLimitButton(this, event)">
+                <span class="icon">savings</span>
+                <span>Set Limit</span>
             </div>
         </section>
 
         <section class="flex-row" id="search">
-            <input class="icon-input icon-search" id="search-bar" placeholder="Search" />
-            <div id="search-filters" onclick="">
+            <input class="icon-input icon-search" id="search-bar" placeholder="Search" onkeydown="onKeyDownSearchBar(this, event)" />
+            <div id="search-filters" onclick="onClickSearchBarFilterButton()">
                 <span class="icon">tune</span>
             </div>
         </section>
 
         <section id="recent-transactions">
             <div class="flex-row" style="justify-content: space-between;">
-                <span id="section-title">Recent Expense</span>
+                <span id="section-title">Recent Expenses</span>
                 <div id="sort">
                     <span style="color: rgb(100, 100, 100)">Sort by</span>
-                    <select name="sort-key" class="sort-dropdown">
+                    <select name="sort-key" class="dropdown" onchange="onChangeSortDropdown(this)">
                         <option value="latest" selected>Latest</option>
                         <option value="oldest">Oldest</option>
                         <option value="amount-desc">High-Low</option>
@@ -71,26 +117,11 @@
                 </div>
             </div>
 
-            <div class="transaction-list">
-                <% expenses.forEach(function(transaction) { %>
-                    <div class="transaction">
-                        <div class="transaction-icon">
-                            <i class="fa <%= transaction.icon %>"></i>
-                        </div>
-                        <div class="transaction-info">
-                            <div class="transaction-source"><%= transaction.source %></div>
-                            <div class="transaction-date"><%= new Date(transaction.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) %></div>
-                        </div>
-                        <div class="transaction-category"><%= transaction.category %></div>
-                        <div class="amount-expense">+<%= transaction.amount.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }) %></div>
-                    </div>
-                <% }) %>
-            </div>
+            <div class="transaction-list"></div>
         </section>
 
-
         <div id="navbar">
-            <div class="navbar-button selected" onclick="document.onNavbarButtonClick(0)">
+            <div class="navbar-button" onclick="document.onNavbarButtonClick(0)">
                 <span class="icon">grid_view</span>
                 <span>Dashboard</span>
             </div>
@@ -98,7 +129,7 @@
                 <span class="icon">payments</span>
                 <span>My Income</span>
             </div>
-            <div class="navbar-button" onclick="document.onNavbarButtonClick(2)">
+            <div class="navbar-button selected" onclick="document.onNavbarButtonClick(2)">
                 <span class="icon">trending_down</span>
                 <span>My Expenses</span>
             </div>
@@ -117,7 +148,34 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/scripts/expenseCharts.js"></script>
+    <script type="module">
+        import {
+            onClickAddExpenseButton,
+            onClickAddExpenseDialogCloseButton,
+            onClickAddExpenseDialog,
+            onKeyDownAddExpenseDialog,
+            onClickSetLimitButton,
+            onClickSetLimitDialogCloseButton,
+            onClickSetLimitDialog,
+            onKeyDownSetLimitDialog,
+            onKeyDownSearchBar,
+            onClickSearchBarFilterButton,
+            onChangeMonthYearDropdown,
+            onChangeSortDropdown,
+        } from '../scripts/expensesPage.js';
+        window.onClickAddExpenseButton = onClickAddExpenseButton;
+        window.onClickAddExpenseDialogCloseButton = onClickAddExpenseDialogCloseButton;
+        window.onClickAddExpenseDialog = onClickAddExpenseDialog;
+        window.onKeyDownAddExpenseDialog = onKeyDownAddExpenseDialog;
+        window.onClickSetLimitButton = onClickSetLimitButton;
+        window.onClickSetLimitDialogCloseButton = onClickSetLimitDialogCloseButton;
+        window.onClickSetLimitDialog = onClickSetLimitDialog;
+        window.onKeyDownSetLimitDialog = onKeyDownSetLimitDialog;
+        window.onKeyDownSearchBar = onKeyDownSearchBar;
+        window.onClickSearchBarFilterButton = onClickSearchBarFilterButton;
+        window.onChangeMonthYearDropdown = onChangeMonthYearDropdown;
+        window.onChangeSortDropdown = onChangeSortDropdown;
+    </script>
     <script src="/scripts/navbar.js"></script>
 
 </body>

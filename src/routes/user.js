@@ -25,7 +25,8 @@ router.get('/dashboard', async (req, res) => {
     // redirect user to login if no session is found
     if (!req.session.userId) {
         console.log('No user ID found in session, redirecting to login'); // Debug log
-        return res.redirect('/account/login');
+        res.redirect('/account/login');
+        return
     }
 
     // save user's ID
@@ -39,79 +40,17 @@ router.get('/dashboard', async (req, res) => {
     // create query to retrieve user's first name
     const firstNameQuery = `SELECT firstName FROM users WHERE user_id = ?`;
 
-    // create query to retrieve user's total income
-    const totalIncomeQuery = `SELECT COALESCE(SUM(amount), 0) AS totalIncome FROM income WHERE user_id = ? AND substr(date, 1, 4) = ? AND substr(date, 6, 2) = ?`;
-
-    // create query to retrieve user's total expenses
-    const totalExpensesQuery = `SELECT COALESCE(SUM(amount), 0) AS totalExpenses FROM expenses WHERE user_id = ? AND substr(date, 1, 4) = ? AND substr(date, 6, 2) = ?`;
-
-    // create query to retrieve user's budgeted income
-    const budgetedIncomeQuery = `SELECT COALESCE(SUM(amount), 0) AS budgetedIncome FROM incomeBudget WHERE user_id = ?`;
-
-    // create query to retrieve user's budgeted expenses
-    const budgetedExpensesQuery = `SELECT COALESCE(SUM(amount), 0) AS budgetedExpenses FROM expenseBudget WHERE user_id = ?`;
-
-    // create query to retrieve user's recent transactions
-    const recentTransactionsQuery = `
-        SELECT * FROM (
-            SELECT 'income' AS type, source, amount, date, IC.name AS category, IC.icon AS icon
-            FROM income I
-            JOIN incomeCategory IC ON I.income_category_id = IC.income_category_id
-            WHERE I.user_id = ?
-            UNION
-            SELECT 'expense' AS type, source, amount, date, EC.name AS category, EC.icon AS icon
-            FROM expenses E
-            JOIN expenseCategory EC ON E.expense_category_id = EC.expense_category_id
-            WHERE E.user_id = ?
-        )
-        ORDER BY date DESC LIMIT 10
-    `;
-
-    let recentTransactions;
     let firstName;
-    let balance;
-    let totalIncome;
-    let totalExpenses;
-    let budgetedIncome;
-    let budgetedExpenses;
-
-    let most_recent_date = new Date();
-    let year = most_recent_date.toLocaleString("en-US", { year: "numeric" });
 
     try {
-        recentTransactions = await db.all(recentTransactionsQuery, [userId, userId]);
-        // Determine which month we're in by looking at most recent transaction date
-        if (recentTransactions) {
-            most_recent_date = new Date(recentTransactions[0].date);
-        }
-        const paddedMonth = (most_recent_date.getMonth() + 1).toString().padStart(2, "0");
-        year = most_recent_date.toLocaleString("en-US", { year: "numeric" })
-
         firstName = (await db.get(firstNameQuery, [userId])).firstName;
-        totalIncome = (await db.get(totalIncomeQuery, [userId, year, paddedMonth])).totalIncome;
-        totalExpenses = (await db.get(totalExpensesQuery, [userId, year, paddedMonth])).totalExpenses;
-        balance = totalIncome - totalExpenses;
-        budgetedIncome = (await db.get(budgetedIncomeQuery, [userId])).budgetedIncome;
-        budgetedExpenses = (await db.get(budgetedExpensesQuery, [userId])).budgetedExpenses;
     } catch (error) {
         console.error(error.message);
-        return res.sendStatus(500);
+        res.sendStatus(500);
+        return 
     }
 
-    const month = most_recent_date.toLocaleString("en-US", { month: "long" });
-
-    // if there are no errors, load the user's dashboard
-    res.render('dashboard', {
-        firstName,
-        balance,
-        month,
-        year,
-        totalIncome,
-        totalExpenses,
-        budgetedIncome,
-        budgetedExpenses,
-        recentTransactions
-    });
+    res.render('dashboard', { firstName });
 });
 
 /**
@@ -127,66 +66,7 @@ router.get('/income', async (req, res) => {
     // save user's ID
     const userId = req.session.userId;
 
-    const db = await open({
-        filename: "./database.db",
-        driver: sqlite3.Database,
-    });
-
-    // create query to retrieve user's total income
-    const totalIncomeQuery = `SELECT COALESCE(SUM(amount), 0) AS totalIncome FROM income WHERE user_id = ? AND substr(date, 1, 4) = ? AND substr(date, 6, 2) = ?`;
-
-    // create query to retrieve user's budgeted income
-    const budgetedIncomeQuery = `SELECT COALESCE(SUM(amount), 0) AS budgetedIncome FROM incomeBudget WHERE user_id = ?`;
-
-    // create query to retrieve user's recent transactions
-    const incomesQuery = `
-        SELECT * FROM (
-        SELECT 'income' AS type, source, amount, date, IC.name AS category, IC.icon AS icon
-        FROM income I
-        JOIN incomeCategory IC ON I.income_category_id = IC.income_category_id
-        WHERE I.user_id = ?
-        )
-        ORDER BY date DESC
-    `;
-
-    const incomeCategoriesQuery = `SELECT name FROM incomeCategory`;
-
-    let incomes;
-    let totalIncome;
-    let budgetedIncome;
-    let incomeCategories;
-
-    let most_recent_date = new Date();
-    let year = most_recent_date.toLocaleString("en-US", { year: "numeric" });
-
-    try {
-        incomes = await db.all(incomesQuery, [userId]);
-        // Determine which month we're in by looking at most recent transaction date
-        if (incomes) {
-            most_recent_date = new Date(incomes[0].date);
-        }
-        const paddedMonth = (most_recent_date.getMonth() + 1).toString().padStart(2, "0");
-        year = most_recent_date.toLocaleString("en-US", { year: "numeric" })
-
-        totalIncome = (await db.get(totalIncomeQuery, [userId, year, paddedMonth])).totalIncome;
-        budgetedIncome = (await db.get(budgetedIncomeQuery, [userId])).budgetedIncome;
-        incomeCategories = (await db.all(incomeCategoriesQuery))
-    } catch (error) {
-        console.error(error.message);
-        return res.sendStatus(500);
-    }
-
-    const month = most_recent_date.toLocaleString("en-US", { month: "long" });
-
-    // if there are no errors, load the user's dashboard
-    res.render('income', {
-        month,
-        year,
-        totalIncome,
-        budgetedIncome,
-        incomes,
-        incomeCategories,
-    });
+    res.render('income', {});
 });
 
 router.get('/summary', async (req, res) => {

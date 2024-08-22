@@ -1,70 +1,70 @@
 import {
     monthYearToString,
-    fetchIncomeMonthYears,
+    fetchExpensesMonthYears,
     fetchTransactionsForMonthYear,
-    fetchAllIncomeCategories,
-    fetchBudgetedIncome,
+    fetchAllExpenseCategories,
+    fetchExpenseLimits,
     createTransactionElement,
 } from "./commonPageHelpers.js";
 
 
-let incomeCategoryChart = null;
+let expenseCategoryChart = null;
 let currentMonthYear = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const incomeMonthYears = await fetchIncomeMonthYears();
-    const incomeCategories = await fetchAllIncomeCategories();
+    const expenseMonthYears = await fetchExpensesMonthYears();
+    const expenseCategories = await fetchAllExpenseCategories();
     // Set current month and year to most recent month and year
-    currentMonthYear = incomeMonthYears[0];
-    populateMonthYearDropdown(incomeMonthYears);
-    populateAddIncomeDialogIncomeCategoryDropdown(incomeCategories);
-    populateSetBudgetDialogIncomeCategoryDropdown(incomeCategories);
+    currentMonthYear = expenseMonthYears[0];
+    populateMonthYearDropdown(expenseMonthYears);
+    populateAddExpenseDialogExpenseCategoryDropdown(expenseCategories);
+    populateSetLimitDialogExpenseCategoryDropdown(expenseCategories);
 
     await updatePage();
 });
 
 const updatePage = async () => {
     const currentTransactions = await fetchTransactionsForMonthYear(currentMonthYear);
-    const budgetedIncome = await fetchBudgetedIncome(currentMonthYear);
-    const incomeCategories = await fetchAllIncomeCategories();
+    const expenseLimits = await fetchExpenseLimits(currentMonthYear);
+    const expenseCategories = await fetchAllExpenseCategories();
 
-    populateRecentIncomesList(currentTransactions.incomes);
+    populateRecentExpensesList(currentTransactions.expenses);
 
     // Destroy old chart to make canvas available, then render new chart
-    if (incomeCategoryChart) {
-        incomeCategoryChart.destroy();
-        incomeCategoryChart = null;
+    if (expenseCategoryChart) {
+        expenseCategoryChart.destroy();
+        expenseCategoryChart = null;
     }
 
-    incomeCategoryChart = renderIncomeCategoryChart(
-        currentTransactions.incomes,
-        incomeCategories,
-        budgetedIncome,
+    expenseCategoryChart = renderExpenseCategoryChart(
+        currentTransactions.expenses,
+        expenseCategories,
+        expenseLimits,
         currentMonthYear
     );
 };
 
-const renderIncomeCategoryChart = (
-    currentIncomes,
-    incomeCategories,
-    budgetedIncome,
+const renderExpenseCategoryChart = (
+    currentExpenses,
+    expenseCategories,
+    expenseLimits,
     monthYear,
 ) => {
-    const categoryChartSection = document.querySelector('section#income-categories-chart-section');
+    const categoryChartSection = document.querySelector('section#expense-categories-chart-section');
     const sectionTitle = categoryChartSection.querySelector('span.section-title');
-    const incomeCategoriesCtx = categoryChartSection.querySelector('canvas#income-categories-chart').getContext('2d');
+    const expenseCategoriesCtx = categoryChartSection.querySelector('canvas#expense-categories-chart').getContext('2d');
 
-    sectionTitle.textContent = `Income Categories for ${monthYearToString(monthYear)}`;
+    sectionTitle.textContent = `Expense Categories for ${monthYearToString(monthYear)}`;
 
-    const categoryTotals = currentIncomes.reduce((accumulator, income) => {
-        if (accumulator[income.category]) {
+    const categoryTotals = currentExpenses.reduce((accumulator, expense) => {
+        if (accumulator[expense.category]) {
             // Category already exists in accumulator
-            accumulator[income.category] += income.amount;
+            accumulator[expense.category] += expense.amount;
         } else {
-            accumulator[income.category] = income.amount;
+            accumulator[expense.category] = expense.amount;
         }
         return accumulator;
-    }, Object.fromEntries(incomeCategories.map(c => [c.name, 0])));
+    }, Object.fromEntries(expenseCategories.map(c => [c.name, 0])));
 
     const categoryTotalsMap = new Map(Object.entries(categoryTotals));
 
@@ -75,17 +75,17 @@ const renderIncomeCategoryChart = (
             total
         }));
 
-    const defaultIncomeCategoryBudgetMap = incomeCategories.reduce((accumulator, category) => {
+    const defaultExpenseCategoryLimitMap = expenseCategories.reduce((accumulator, category) => {
         accumulator[category.name] = 0;
         return accumulator;
     }, {});
 
-    const incomeCategoryBudgetMap = budgetedIncome.reduce((accumulator, budget) => {
-        accumulator[budget.category] = budget.amount;
+    const expenseCategoryLimitMap = expenseLimits.reduce((accumulator, limit) => {
+        accumulator[limit.category] = limit.amount;
         return accumulator;
-    }, defaultIncomeCategoryBudgetMap);
+    }, defaultExpenseCategoryLimitMap);
 
-    const incomeCategoryChart = new Chart(incomeCategoriesCtx, {
+    const expenseCategoryChart = new Chart(expenseCategoriesCtx, {
         type: 'bar',
         data: {
             labels: sortedCategoryTotals.map(category => category.name),
@@ -93,11 +93,11 @@ const renderIncomeCategoryChart = (
                 {
                     label: 'Actual',
                     data: sortedCategoryTotals.map(category => category.total),
-                    backgroundColor: 'rgba(63, 236, 63, 1)',
+                    backgroundColor: 'rgba(252, 51, 51, 1)',
                 },
                 {
-                    label: 'Budgeted',
-                    data: sortedCategoryTotals.map(category => incomeCategoryBudgetMap[category.name]),
+                    label: 'Limit',
+                    data: sortedCategoryTotals.map(category => expenseCategoryLimitMap[category.name]),
                     backgroundColor: 'rgba(245, 245, 245, 1)',
                 },
             ],
@@ -133,7 +133,7 @@ const renderIncomeCategoryChart = (
         }
     });
 
-    return incomeCategoryChart;
+    return expenseCategoryChart;
 };
 
 const populateMonthYearDropdown = (monthYears) => {
@@ -159,9 +159,9 @@ export const onChangeMonthYearDropdown = async (element) => {
     await updatePage();
 };
 
-const populateAddIncomeDialogIncomeCategoryDropdown = (incomeCategories) => {
-    const dropdown = document.querySelector('dialog#add-income-dialog select#add-income-dialog-category');
-    incomeCategories.forEach(category => {
+const populateAddExpenseDialogExpenseCategoryDropdown = (expenseCategories) => {
+    const dropdown = document.querySelector('dialog#add-expense-dialog select#add-expense-dialog-category');
+    expenseCategories.forEach(category => {
         const option = document.createElement('option');
         option.value = category.id;
         option.text = category.name;
@@ -169,9 +169,9 @@ const populateAddIncomeDialogIncomeCategoryDropdown = (incomeCategories) => {
     });
 };
 
-const populateSetBudgetDialogIncomeCategoryDropdown = (incomeCategories) => {
-    const dropdown = document.querySelector('dialog#set-budget-dialog select#set-budget-dialog-category');
-    incomeCategories.forEach(category => {
+const populateSetLimitDialogExpenseCategoryDropdown = (expenseCategories) => {
+    const dropdown = document.querySelector('dialog#set-limit-dialog select#set-limit-dialog-category');
+    expenseCategories.forEach(category => {
         const option = document.createElement('option');
         option.value = category.id;
         option.text = category.name;
@@ -179,29 +179,29 @@ const populateSetBudgetDialogIncomeCategoryDropdown = (incomeCategories) => {
     });
 };
 
-const populateRecentIncomesList = (incomes, filter=undefined, sortKey='latest') => {
-    const recentIncomesList = document.querySelector('section#recent-transactions div.transaction-list');
-    const sortFunc = (income1, income2) => {
+const populateRecentExpensesList = (expenses, filter=undefined, sortKey='latest') => {
+    const recentExpensesList = document.querySelector('section#recent-transactions div.transaction-list');
+    const sortFunc = (expense1, expense2) => {
         if (sortKey === 'latest' || sortKey == 'oldest') {
-            return new Date(income2) - new Date(income1);
+            return new Date(expense2) - new Date(expense1);
         } else if (sortKey === 'amount-desc') {
-            return income2.amount - income1.amount;
+            return expense2.amount - expense1.amount;
         } else if (sortKey === 'amount-asc') {
-            return income1.amount - income2.amount;
+            return expense1.amount - expense2.amount;
         }
     };
-    let sortedFilteredIncomes = incomes
-        .filter(income => filter ? income.source.includes(filter) : true)
+    let sortedFilteredExpenses = expenses
+        .filter(expense => filter ? expense.source.includes(filter) : true)
         .toSorted(sortFunc)
     if (sortKey === 'oldest') {
-        sortedFilteredIncomes = [...sortedFilteredIncomes].reverse();
+        sortedFilteredExpenses = [...sortedFilteredExpenses].reverse();
     }
-    const newChildren = sortedFilteredIncomes.map(income => createTransactionElement(income));
-    recentIncomesList.replaceChildren(...newChildren);
+    const newChildren = sortedFilteredExpenses.map(expense => createTransactionElement(expense));
+    recentExpensesList.replaceChildren(...newChildren);
 };
 
-export const onClickAddIncomeButton = (element, event) => {
-    const dialog = document.querySelector('dialog#add-income-dialog');
+export const onClickAddExpenseButton = (element, event) => {
+    const dialog = document.querySelector('dialog#add-expense-dialog');
     dialog.showModal();
 };
 
@@ -213,40 +213,40 @@ const clickedOutsideDialog = (element, event) => {
     return !isInDialog;
 };
 
-export const onClickAddIncomeDialogCloseButton = () => {
-    const dialog = document.querySelector('dialog#add-income-dialog');
+export const onClickAddExpenseDialogCloseButton = () => {
+    const dialog = document.querySelector('dialog#add-expense-dialog');
     dialog.close();
 };
 
-export const onClickAddIncomeDialog = (element, event) => {
+export const onClickAddExpenseDialog = (element, event) => {
     if (clickedOutsideDialog(element, event)) {
         element.close();
     }
 };
 
-export const onKeyDownAddIncomeDialog = (element, event) => {
+export const onKeyDownAddExpenseDialog = (element, event) => {
     if (event.key === 'Escape') {
         element.close();
     }
 };
 
-export const onClickSetBudgetButton = (element, event) => {
-    const dialog = document.querySelector('dialog#set-budget-dialog');
+export const onClickSetLimitButton = (element, event) => {
+    const dialog = document.querySelector('dialog#set-limit-dialog');
     dialog.showModal();
 };
 
-export const onClickSetBudgetDialogCloseButton = () => {
-    const dialog = document.querySelector('dialog#set-budget-dialog');
+export const onClickSetLimitDialogCloseButton = () => {
+    const dialog = document.querySelector('dialog#set-limit-dialog');
     dialog.close();
 };
 
-export const onClickSetBudgetDialog = (element, event) => {
+export const onClickSetLimitDialog = (element, event) => {
     if (clickedOutsideDialog(element, event)) {
         element.close();
     }
 };
 
-export const onKeyDownSetBudgetDialog = (element, event) => {
+export const onKeyDownSetLimitDialog = (element, event) => {
     if (event.key === 'Escape') {
         element.close();
     }
@@ -255,21 +255,21 @@ export const onKeyDownSetBudgetDialog = (element, event) => {
 export const onKeyDownSearchBar = async (element, event) => {
     if (event.key === 'Enter') {
         const filter = element.value;
-        await filterRecentIncomesList(filter);
+        await filterRecentExpensesList(filter);
     }
 };
 
 export const onClickSearchBarFilterButton = async () => {
     const searchBar = document.querySelector('section#search input#search-bar');
     const filter = searchBar.value;
-    await filterRecentIncomesList(filter);
+    await filterRecentExpensesList(filter);
 };
 
-const filterRecentIncomesList = async (filter) => {
+const filterRecentExpensesList = async (filter) => {
     const sortDropdown = document.querySelector('section#recent-transactions select.dropdown');
     const sortKey = sortDropdown.value;
     const currentTransactions = await fetchTransactionsForMonthYear(currentMonthYear);
-    populateRecentIncomesList(currentTransactions.incomes, filter, sortKey);
+    populateRecentExpensesList(currentTransactions.expenses, filter, sortKey);
 };
 
 export const onChangeSortDropdown = async (element) => {
@@ -277,5 +277,5 @@ export const onChangeSortDropdown = async (element) => {
     const filter = searchBar.value;
     const sortKey = element.value;
     const currentTransactions = await fetchTransactionsForMonthYear(currentMonthYear);
-    populateRecentIncomesList(currentTransactions.incomes, filter, sortKey);
+    populateRecentExpensesList(currentTransactions.expenses, filter, sortKey);
 };

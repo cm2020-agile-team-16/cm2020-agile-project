@@ -19,7 +19,7 @@ transitionEndedEvent = getTransitionEndedEventName();
 const pages = [
     "/user/dashboard",
     "/user/income",
-    "/user/expense",
+    "/user/expenses",
     "/user/summary"
 ];
 

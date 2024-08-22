@@ -9,6 +9,7 @@
 * Sqlite3 
     - follow the instructions at https://www.tutorialspoint.com/sqlite/sqlite_installation.htm 
     - Note that the latest versions of the Mac OS and Linux come with SQLite pre-installed
+    - For MacOS ARM devices, install homebrew at https://brew.sh/ . Then install SQLite using ```brew install sqlite```
 
 #### Settings that should be adjusted in configuration files ####
 

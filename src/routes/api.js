@@ -164,8 +164,6 @@ router.get('/income-categories', async (req, res) => {
         return;
     }
 
-    const userId = req.session.userId;
-
     const db = await open({
         filename: "./database.db",
         driver: sqlite3.Database,
@@ -176,6 +174,31 @@ router.get('/income-categories', async (req, res) => {
     try {
         const incomeCategories = (await db.all(incomeCategoriesQuery));
         res.json(incomeCategories);
+    } catch (error) {
+        console.error(error.message);
+        res.sendStatus(500);
+    }
+});
+
+/**
+ * @desc API endpoint for fetching all expense categories.
+ */
+router.get('/expense-categories', async (req, res) => {
+    if (!req.session.userId) {
+        res.sendStatus(401);
+        return;
+    }
+
+    const db = await open({
+        filename: "./database.db",
+        driver: sqlite3.Database,
+    });
+
+    const expenseCategoriesQuery = `SELECT expense_category_id AS id, name FROM expenseCategory`;
+
+    try {
+        const expenseCategories = (await db.all(expenseCategoriesQuery));
+        res.json(expenseCategories);
     } catch (error) {
         console.error(error.message);
         res.sendStatus(500);
@@ -225,7 +248,7 @@ router.get('/budgeted-income', async (req, res) => {
 /**
  * @desc API endpoint for fetching a user's budgeted expenses.
  */
-router.get('/budgeted-expenses', async (req, res) => {
+router.get('/expense-limits', async (req, res) => {
     if (!req.session.userId) {
         res.sendStatus(401);
         return;
@@ -302,6 +325,45 @@ router.post('/add-income', async (req, res) => {
 });
 
 /**
+ * @desc API endpoint for adding an expense for a user.
+ */
+router.post('/add-expense', async (req, res) => {
+    if (!req.session.userId) {
+        res.sendStatus(401);
+        return;
+    }
+
+    const userId = req.session.userId;
+
+    const db = await open({
+        filename: "./database.db",
+        driver: sqlite3.Database,
+    });
+
+    const addExpenseQuery = `
+        INSERT INTO expenses
+        (user_id,   expense_category_id, source, amount, date)
+        VALUES
+        (?,         ?,                  ?,      ?,      ?)
+    `;
+
+    const { category, source, amount } = req.body;
+
+    const d = new Date();
+    const paddedMonth = (d.getMonth() + 1).toString().padStart(2, '0');
+    const paddedDay = (d.getDate()).toString().padStart(2, '0');
+    const date = `${d.getFullYear()}-${paddedMonth}-${paddedDay} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+
+    try {
+        await db.run(addExpenseQuery, [userId, category, source, amount, date]);
+        res.redirect(req.headers.referer);
+    } catch (error) {
+        console.error(error.message);
+        res.sendStatus(500);
+    }
+});
+
+/**
  * @desc API endpoint for setting an income budget for a user.
  */
 router.post('/set-income-budget', async (req, res) => {
@@ -338,3 +400,42 @@ router.post('/set-income-budget', async (req, res) => {
         res.sendStatus(500);
     }
 });
+
+/**
+ * @desc API endpoint for setting an expense limit for a user.
+ */
+router.post('/set-expense-limit', async (req, res) => {
+    if (!req.session.userId) {
+        res.sendStatus(401);
+        return;
+    }
+
+    const userId = req.session.userId;
+
+    const db = await open({
+        filename: "./database.db",
+        driver: sqlite3.Database,
+    });
+
+    const setExpenseBudgetQuery = `
+        INSERT OR REPLACE INTO expenseBudget
+        (user_id,   expense_category_id, amount, month)
+        VALUES
+        (?,         ?,                  ?,      ?)
+    `;
+
+    const { category, amount } = req.body;
+
+    const d = new Date();
+    const paddedMonth = (d.getMonth() + 1).toString().padStart(2, '0');
+    const date = `${d.getFullYear()}-${paddedMonth}`;
+
+    try {
+        await db.run(setExpenseBudgetQuery, [userId, category, amount, date]);
+        res.redirect(req.headers.referer);
+    } catch (error) {
+        console.error(error.message);
+        res.sendStatus(500);
+    }
+});
+

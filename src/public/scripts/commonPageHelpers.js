@@ -55,6 +55,20 @@ export const fetchAllIncomeCategories = async () => {
     return [];
 };
 
+export const fetchAllExpenseCategories = async () => {
+    const url = 'api/expense-categories';
+    const response = await fetch(url, {
+        method: "GET",
+    });
+
+    if (response.ok) {
+        const expenseCategories = await response.json();
+        return expenseCategories;
+    }
+
+    return [];
+};
+
 export const fetchBudgetedIncome = async (monthYear) => {
     const url = `api/budgeted-income?month=${monthYear.month}&year=${monthYear.year}`;
     const response = await fetch(url, {
@@ -69,15 +83,15 @@ export const fetchBudgetedIncome = async (monthYear) => {
     return undefined;
 };
 
-export const fetchBudgetedExpenses = async (monthYear) => {
-    const url = `api/budgeted-expenses?month=${monthYear.month}&year=${monthYear.year}`;
+export const fetchExpenseLimits = async (monthYear) => {
+    const url = `api/expense-limits?month=${monthYear.month}&year=${monthYear.year}`;
     const response = await fetch(url, {
         method: "GET",
     });
 
     if (response.ok) {
-        const budgetedExpenses = await response.json();
-        return budgetedExpenses;
+        const expenseLimits = await response.json();
+        return expenseLimits;
     }
 
     return undefined;

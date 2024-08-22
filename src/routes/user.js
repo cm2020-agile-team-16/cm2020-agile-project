@@ -59,16 +59,31 @@ router.get('/dashboard', async (req, res) => {
 router.get('/income', async (req, res) => {
     // redirect user to login if no session is found
     if (!req.session.userId) {
-        console.log('No user ID found in session, redirecting to login'); // Debug log
-        return res.redirect('/account/login');
+        console.log('No user ID found in session, redirecting to login');
+        res.redirect('/account/login');
+        return;
     }
-
-    // save user's ID
-    const userId = req.session.userId;
 
     res.render('income', {});
 });
 
+/**
+ * @desc Renders the expenses page
+ */
+router.get('/expenses', async (req, res) => {
+    // redirect user to login if no session is found
+    if (!req.session.userId) {
+        console.log('No user ID found in session, redirecting to login');
+        res.redirect('/account/login');
+        return;
+    }
+
+    res.render('expenses', {});
+});
+
+/**
+ * @desc Renders the summary page
+ */
 router.get('/summary', async (req, res) => {
     // redirect user to login if no session is found
     if (!req.session.userId) {
@@ -233,67 +248,3 @@ router.get('/summary', async (req, res) => {
         expenseCategoriesOverBudget
     });
 });
-
-// /**
-//  * @desc Adds a new income record
-//  */
-// router.post('/income', (req, res) => {
-//     const { userId, category, source, amount } = req.body;
-//     const query = "INSERT INTO income (user_id, income_category_id, source, amount) VALUES (?, ?, ?, ?)";
-
-//     db.run(query, [userId, category, source, amount], function (err) {
-//         if (err) {
-//             console.error(err.message);
-//             return res.sendStatus(500);
-//         }
-//         res.redirect('/dashboard');
-//     });
-// });
-
-// /**
-//  * @desc Adds a new expense record
-//  */
-// router.post('/expenses', (req, res) => {
-//     const { userId, category, source, amount } = req.body;
-//     const query = "INSERT INTO expenses (user_id, expense_category_id, source, amount) VALUES (?, ?, ?, ?)";
-
-//     db.run(query, [userId, category, source, amount], function (err) {
-//         if (err) {
-//             console.error(err.message);
-//             return res.sendStatus(500);
-//         }
-//         res.redirect('/dashboard');
-//     });
-// });
-
-// /**
-//  * @desc Adds a new income budget record
-//  */
-// router.post('/income-budget', (req, res) => {
-//     const { userId, category, amount } = req.body;
-//     const query = "INSERT INTO incomeBudget (user_id, income_category_id, amount) VALUES (?, ?, ?)";
-
-//     db.run(query, [userId, category, amount], function (err) {
-//         if (err) {
-//             console.error(err.message);
-//             return res.sendStatus(500);
-//         }
-//         res.redirect('/dashboard');
-//     });
-// });
-
-// /**
-//  * @desc Adds a new expense budget record
-//  */
-// router.post('/expense-budget', (req, res) => {
-//     const { userId, category, amount } = req.body;
-//     const query = "INSERT INTO expenseBudget (user_id, expense_category_id, amount) VALUES (?, ?, ?)";
-
-//     db.run(query, [userId, category, amount], function (err) {
-//         if (err) {
-//             console.error(err.message);
-//             return res.sendStatus(500);
-//         }
-//         res.redirect('/dashboard');
-//     });
-// });

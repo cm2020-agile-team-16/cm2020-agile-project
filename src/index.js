@@ -18,7 +18,7 @@ const __dirname = path.dirname(__filename);
 
 // Set up express, bodyparser and EJS
 const app = express();
-const port = 3000;
+const port = 3001;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs'); // set the app to use ejs for rendering

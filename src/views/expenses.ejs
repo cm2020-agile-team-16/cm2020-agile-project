@@ -8,7 +8,7 @@
     <title>Dashboard - <%= app_name %></title>
     <!-- LINK TO STYLESHEETS / GOOGLE FONTS -->
     <link rel="stylesheet" href="/styles/common.css">
-    <link rel="stylesheet" href="/styles/income.css">
+    <link rel="stylesheet" href="/styles/expenses.css">
     <link rel="stylesheet" href="/styles/icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
@@ -16,26 +16,26 @@
 
 <body>
     <dialog
-        id="add-income-dialog"
-        onclick="onClickAddIncomeDialog(this, event)"
-        onkeydown="onKeyDownAddIncomeDialog(this, event)"
+        id="add-expense-dialog"
+        onclick="onClickAddExpenseDialog(this, event)"
+        onkeydown="onKeyDownAddExpenseDialog(this, event)"
     >
         <div class="flex-row dialog-row-close">
-            <span class="icon" onclick="onClickAddIncomeDialogCloseButton()">close</span>
+            <span class="icon" onclick="onClickAddExpenseDialogCloseButton()">close</span>
         </div>
-        <form class="flex-row dialog-row-form" method="POST" action="/user/api/add-income">
+        <form class="flex-row dialog-row-form" method="POST" action="/user/api/add-expense">
             <div class="flex-row">
-                <label for="add-income-dialog-source">Source</label>
-                <input id="add-income-dialog-source" name="source">
+                <label for="add-expense-dialog-source">Source</label>
+                <input id="add-expense-dialog-source" name="source">
             </div>
             <div class="flex-row">
-                <label for="add-income-dialog-category">Category</label>
-                <select id="add-income-dialog-category" name="category">
+                <label for="add-expense-dialog-category">Category</label>
+                <select id="add-expense-dialog-category" name="category">
                 </select>
             </div>
             <div class="flex-row">
-                <label for="add-income-dialog-amount">Amount</label>
-                <input id="add-income-dialog-amount" name="amount">
+                <label for="add-expense-dialog-amount">Amount</label>
+                <input id="add-expense-dialog-amount" name="amount">
             </div>
             <div class="flex-row dialog-row-submit">
                 <button class="button" type="submit">Submit</button>
@@ -43,22 +43,22 @@
         </form>
     </dialog>
     <dialog
-    id="set-budget-dialog"
-    onclick="onClickSetBudgetDialog(this, event)"
-    onkeydown="onKeyDownSetBudgetDialog(this, event)"
+    id="set-limit-dialog"
+    onclick="onClickSetLimitDialog(this, event)"
+    onkeydown="onKeyDownSetLimitDialog(this, event)"
 >
     <div class="flex-row dialog-row-close">
-        <span class="icon" onclick="onClickSetBudgetDialogCloseButton()">close</span>
+        <span class="icon" onclick="onClickSetLimitDialogCloseButton()">close</span>
     </div>
-    <form class="flex-row dialog-row-form" method="POST" action="/user/api/set-income-budget">
+    <form class="flex-row dialog-row-form" method="POST" action="/user/api/set-expense-limit">
         <div class="flex-row">
-            <label for="set-budget-dialog-category">Category</label>
-            <select id="set-budget-dialog-category" name="category">
+            <label for="set-limit-dialog-category">Category</label>
+            <select id="set-limit-dialog-category" name="category">
             </select>
         </div>
         <div class="flex-row">
-            <label for="set-budget-dialog-amount">Amount</label>
-            <input id="set-budget-dialog-amount" name="amount">
+            <label for="set-limit-dialog-amount">Amount</label>
+            <input id="set-limit-dialog-amount" name="amount">
         </div>
         <div class="flex-row dialog-row-submit">
             <button class="button" type="submit">Submit</button>
@@ -68,7 +68,7 @@
     <header>
         <div id="welcome">
             <span id="header-text">
-                My Income
+                My Expenses
                 <select name="sort-key" id="month-year-dropdown" class="dropdown" onchange="onChangeMonthYearDropdown(this)">
                 </select>
             </span>
@@ -80,20 +80,19 @@
     </header>
 
     <main id="flex">
-
-        <section id="income-categories-chart-section">
+        <section id="expense-categories-chart-section">
             <span class="section-title"></span>
-            <canvas id="income-categories-chart" width="1000" height="200"></canvas>
+            <canvas id="expense-categories-chart" width="1000" height="200"></canvas>
         </section>
 
-        <section id="add-income-section">
-            <div class="button" onclick="onClickAddIncomeButton(this, event)">
+        <section id="add-expense-section">
+            <div class="button" onclick="onClickAddExpenseButton(this, event)">
                 <span class="icon">add_circle</span>
-                <span>Add Income</span>
+                <span>Add Expense</span>
             </div>
-            <div class="button" onclick="onClickSetBudgetButton(this, event)">
+            <div class="button" onclick="onClickSetLimitButton(this, event)">
                 <span class="icon">savings</span>
-                <span>Set budget</span>
+                <span>Set Limit</span>
             </div>
         </section>
 
@@ -106,7 +105,7 @@
 
         <section id="recent-transactions">
             <div class="flex-row" style="justify-content: space-between;">
-                <span id="section-title">Recent Incomes</span>
+                <span id="section-title">Recent Expenses</span>
                 <div id="sort">
                     <span style="color: rgb(100, 100, 100)">Sort by</span>
                     <select name="sort-key" class="dropdown" onchange="onChangeSortDropdown(this)">
@@ -126,11 +125,11 @@
                 <span class="icon">grid_view</span>
                 <span>Dashboard</span>
             </div>
-            <div class="navbar-button selected" onclick="document.onNavbarButtonClick(1)">
+            <div class="navbar-button" onclick="document.onNavbarButtonClick(1)">
                 <span class="icon">payments</span>
                 <span>My Income</span>
             </div>
-            <div class="navbar-button" onclick="document.onNavbarButtonClick(2)">
+            <div class="navbar-button selected" onclick="document.onNavbarButtonClick(2)">
                 <span class="icon">trending_down</span>
                 <span>My Expenses</span>
             </div>
@@ -139,6 +138,7 @@
                 <span>Summary</span>
             </div>
         </div>
+
     </main>
 
     <footer>
@@ -150,27 +150,27 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module">
         import {
-            onClickAddIncomeButton,
-            onClickAddIncomeDialogCloseButton,
-            onClickAddIncomeDialog,
-            onKeyDownAddIncomeDialog,
-            onClickSetBudgetButton,
-            onClickSetBudgetDialogCloseButton,
-            onClickSetBudgetDialog,
-            onKeyDownSetBudgetDialog,
+            onClickAddExpenseButton,
+            onClickAddExpenseDialogCloseButton,
+            onClickAddExpenseDialog,
+            onKeyDownAddExpenseDialog,
+            onClickSetLimitButton,
+            onClickSetLimitDialogCloseButton,
+            onClickSetLimitDialog,
+            onKeyDownSetLimitDialog,
             onKeyDownSearchBar,
             onClickSearchBarFilterButton,
             onChangeMonthYearDropdown,
             onChangeSortDropdown,
-        } from '../scripts/incomePage.js';
-        window.onClickAddIncomeButton = onClickAddIncomeButton;
-        window.onClickAddIncomeDialogCloseButton = onClickAddIncomeDialogCloseButton;
-        window.onClickAddIncomeDialog = onClickAddIncomeDialog;
-        window.onKeyDownAddIncomeDialog = onKeyDownAddIncomeDialog;
-        window.onClickSetBudgetButton = onClickSetBudgetButton;
-        window.onClickSetBudgetDialogCloseButton = onClickSetBudgetDialogCloseButton;
-        window.onClickSetBudgetDialog = onClickSetBudgetDialog;
-        window.onKeyDownSetBudgetDialog = onKeyDownSetBudgetDialog;
+        } from '../scripts/expensesPage.js';
+        window.onClickAddExpenseButton = onClickAddExpenseButton;
+        window.onClickAddExpenseDialogCloseButton = onClickAddExpenseDialogCloseButton;
+        window.onClickAddExpenseDialog = onClickAddExpenseDialog;
+        window.onKeyDownAddExpenseDialog = onKeyDownAddExpenseDialog;
+        window.onClickSetLimitButton = onClickSetLimitButton;
+        window.onClickSetLimitDialogCloseButton = onClickSetLimitDialogCloseButton;
+        window.onClickSetLimitDialog = onClickSetLimitDialog;
+        window.onKeyDownSetLimitDialog = onKeyDownSetLimitDialog;
         window.onKeyDownSearchBar = onKeyDownSearchBar;
         window.onClickSearchBarFilterButton = onClickSearchBarFilterButton;
         window.onChangeMonthYearDropdown = onChangeMonthYearDropdown;

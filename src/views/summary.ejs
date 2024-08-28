@@ -7,6 +7,7 @@
     <!-- TAB TITLE -->
     <title>Summary - <%= app_name %></title>
     <!-- LINK TO STYLESHEETS / GOOGLE FONTS -->
+    <link rel="stylesheet" href="/styles/common.css">
     <link rel="stylesheet" href="/styles/summary.css">
     <link rel="stylesheet" href="/styles/icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -16,7 +17,11 @@
 <body>
     <header>
         <div id="welcome">
-            <span id="dashboard-header-text">Summary</span>
+            <span id="header-text">
+                Summary
+                <select name="sort-key" id="month-year-dropdown" class="dropdown" onchange="onChangeMonthYearDropdown(this)">
+                </select>
+            </span>
         </div>
         <div id="profile">
             <img id="profile-picture" src="/assets/images/pfp.png" onclick="window.location.href = '/account/profile/'" alt="profile picture">
@@ -26,10 +31,15 @@
 
     <main id="flex">
 
-        <!-- Financial Health Section -->
-        <section id="financial-health">
+        <section id="financial-health-chart-section">
+            <span class="section-title"></span>
+            <canvas id="financial-health-chart" width="1000" height="200"></canvas>
+        </section>
+
+        <!-- Financial Health Section
+        <section id="financial-health-chart-section">
             <div>
-                <span id="section-title">Overall Financial Health</span>
+                <span class="section-title">Overall Financial Health</span>
                 <div id="balances">
                     <h4>Balances of Last 3 Months</h4>
                     <ul>
@@ -47,7 +57,7 @@
                     </ul>
                 </div>
             </div>
-        </section>
+        </section> -->
 
         <!-- Financial Snapshot Section -->
         <section id="financial-snapshot">

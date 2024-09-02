@@ -27,6 +27,26 @@ export const fetchExpensesMonthYears = async () => {
     }
 };
 
+export const fetchAllMonthYears = async () => {
+    const incomeMonthYears = await fetchIncomeMonthYears();
+    const expensesMonthYears = await fetchExpensesMonthYears();
+
+    const uniqueMonthYears = [...incomeMonthYears, ...expensesMonthYears].reduce((accumulator, monthYear) => {
+        if (!accumulator.some(my => my.month === monthYear.month && my.year === monthYear.year)) {
+            accumulator.push(monthYear);
+        }
+        return accumulator;
+    }, []);
+
+    const sortedMonthYears = uniqueMonthYears.toSorted((my1, my2) => {
+        const date1 = `${my1.year}-${my1.month}`;
+        const date2 = `${my2.year}-${my2.month}`;
+        return new Date(date2) - new Date(date1);
+    });
+
+    return sortedMonthYears;
+};
+
 export const fetchTransactionsForMonthYear = async (monthYear) => {
     const url = `api/transactions?month=${monthYear.month}&year=${monthYear.year}`;
     const response = await fetch(url, {
@@ -92,6 +112,62 @@ export const fetchExpenseLimits = async (monthYear) => {
     if (response.ok) {
         const expenseLimits = await response.json();
         return expenseLimits;
+    }
+
+    return undefined;
+};
+
+export const fetchTopThreeIncomeCategories = async (monthYear) => {
+    const url = `api/top-income-categories?month=${monthYear.month}&year=${monthYear.year}`;
+    const response = await fetch(url, {
+        method: "GET",
+    });
+
+    if (response.ok) {
+        const topIncomeCategories = await response.json();
+        return topIncomeCategories;
+    }
+
+    return undefined;
+};
+
+export const fetchTopThreeExpenseCategories = async (monthYear) => {
+    const url = `api/top-expense-categories?month=${monthYear.month}&year=${monthYear.year}`;
+    const response = await fetch(url, {
+        method: "GET",
+    });
+
+    if (response.ok) {
+        const topExpenseCategories = await response.json();
+        return topExpenseCategories;
+    }
+
+    return undefined;
+};
+
+export const fetchIncomeCategoriesUnderBudget = async (monthYear) => {
+    const url = `api/income-categories-under-budget?month=${monthYear.month}&year=${monthYear.year}`;
+    const response = await fetch(url, {
+        method: "GET",
+    });
+
+    if (response.ok) {
+        const incomeCategoriesUnderBudget = await response.json();
+        return incomeCategoriesUnderBudget;
+    }
+
+    return undefined;
+};
+
+export const fetchExpenseCategoriesOverBudget = async (monthYear) => {
+    const url = `api/expense-categories-over-budget?month=${monthYear.month}&year=${monthYear.year}`;
+    const response = await fetch(url, {
+        method: "GET",
+    });
+
+    if (response.ok) {
+        const expenseCategoriesOverBudget = await response.json();
+        return expenseCategoriesOverBudget;
     }
 
     return undefined;

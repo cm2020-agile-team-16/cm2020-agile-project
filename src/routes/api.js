@@ -438,3 +438,184 @@ router.post('/set-expense-limit', async (req, res) => {
         res.sendStatus(500);
     }
 });
+
+/**
+ * @desc API endpoint for fetching a user's top three income categories for a given month.
+ */
+router.get('/top-income-categories', async (req, res) => {
+    if (!req.session.userId) {
+        res.sendStatus(401);
+        return;
+    }
+
+    const userId = req.session.userId;
+
+    const db = await open({
+        filename: "./database.db",
+        driver: sqlite3.Database,
+    });
+
+    const topIncomeCategoriesQuery = `
+        SELECT ic.name AS categoryName, SUM(i.amount) AS totalAmount, ic.under_budget_tips AS tips
+        FROM income i
+        JOIN incomeCategory ic ON i.income_category_id = ic.income_category_id
+        WHERE i.user_id = ? 
+        AND SUBSTR(i.date, 1, 7) = ?
+        GROUP BY ic.name, ic.under_budget_tips
+        ORDER BY totalAmount DESC
+        LIMIT 3;
+    `;
+
+    const month = req.query.month;
+    const year = req.query.year;
+
+    const date = `${year}-${month}`;
+
+    try {
+        const topIncomeCategories = await db.all(topIncomeCategoriesQuery, [userId, date]);
+        res.json(topIncomeCategories);
+    } catch (error) {
+        console.error(error.message);
+        res.sendStatus(500);
+    }
+});
+
+/**
+ * @desc API endpoint for fetching a user's top three expense categories for a given month.
+ */
+router.get('/top-expense-categories', async (req, res) => {
+    if (!req.session.userId) {
+        res.sendStatus(401);
+        return;
+    }
+
+    const userId = req.session.userId;
+
+    const db = await open({
+        filename: "./database.db",
+        driver: sqlite3.Database,
+    });
+
+    const topExpenseCategoriesQuery = `
+        SELECT ec.name AS categoryName, SUM(e.amount) AS totalAmount, ec.over_budget_tips AS tips
+        FROM expenses e
+        JOIN expenseCategory ec ON e.expense_category_id = ec.expense_category_id
+        WHERE e.user_id = ? 
+        AND SUBSTR(e.date, 1, 7) = ?
+        GROUP BY ec.name, ec.over_budget_tips
+        ORDER BY totalAmount DESC
+        LIMIT 3;
+    `;
+
+    const month = req.query.month;
+    const year = req.query.year;
+
+    const date = `${year}-${month}`;
+
+    try {
+        const topExpenseCategories = await db.all(topExpenseCategoriesQuery, [userId, date]);
+        res.json(topExpenseCategories);
+    } catch (error) {
+        console.error(error.message);
+        res.sendStatus(500);
+    }
+});
+
+/**
+ * @desc API endpoint for fetching a user's income categories that are under budget for a given month.
+ */
+router.get('/income-categories-under-budget', async (req, res) => {
+    if (!req.session.userId) {
+        res.sendStatus(401);
+        return;
+    }
+
+    const userId = req.session.userId;
+
+    const db = await open({
+        filename: "./database.db",
+        driver: sqlite3.Database,
+    });
+
+    const incomeCategoriesUnderBudgetQuery = `
+        SELECT ic.name AS categoryName, 
+               ib.amount AS budgetedAmount,
+               i.total_income AS actualAmount,
+               ic.under_budget_tips AS tips
+        FROM incomeCategory ic
+        JOIN (
+            SELECT income_category_id, 
+                   SUM(amount) AS total_income
+            FROM income 
+            WHERE user_id = ? 
+            AND SUBSTR(date, 1, 7) = ?
+            GROUP BY income_category_id
+        ) i ON ic.income_category_id = i.income_category_id
+        JOIN incomeBudget ib ON ic.income_category_id = ib.income_category_id
+        WHERE i.total_income < ib.amount
+          AND ib.month = ?;
+    `;
+
+    const month = req.query.month;
+    const year = req.query.year;
+
+    const date = `${year}-${month}`;
+
+    try {
+        const incomeCategoriesUnderBudget = await db.all(incomeCategoriesUnderBudgetQuery, [userId, date, date]);
+        res.json(incomeCategoriesUnderBudget);
+    } catch (error) {
+        console.error(error.message);
+        res.sendStatus(500);
+    }
+});
+
+
+/**
+ * @desc API endpoint for fetching a user's expense categories that are over budget for a given month.
+ */
+router.get('/expense-categories-over-budget', async (req, res) => {
+    if (!req.session.userId) {
+        res.sendStatus(401);
+        return;
+    }
+
+    const userId = req.session.userId;
+
+    const db = await open({
+        filename: "./database.db",
+        driver: sqlite3.Database,
+    });
+
+    const expenseCategoriesOverBudgetQuery = `
+        SELECT ec.name AS categoryName, 
+               ec.over_budget_tips AS tips,
+               eb.amount AS budgetedAmount,
+               e.total_expenses AS actualAmount
+        FROM expenseCategory ec
+        JOIN (
+            SELECT expense_category_id, 
+                   SUM(amount) AS total_expenses
+            FROM expenses
+            WHERE user_id = ? 
+            AND SUBSTR(date, 1, 7) = ?
+            GROUP BY expense_category_id
+        ) e ON ec.expense_category_id = e.expense_category_id
+        JOIN expenseBudget eb ON ec.expense_category_id = eb.expense_category_id
+        WHERE e.total_expenses > eb.amount
+          AND eb.month = ?;
+    `;
+
+    const month = req.query.month;
+    const year = req.query.year;
+
+    const date = `${year}-${month}`;
+
+    try {
+        const expenseCategoriesOverBudget = await db.all(expenseCategoriesOverBudgetQuery, [userId, date, date]);
+        res.json(expenseCategoriesOverBudget);
+    } catch (error) {
+        console.error(error.message);
+        res.sendStatus(500);
+    }
+});

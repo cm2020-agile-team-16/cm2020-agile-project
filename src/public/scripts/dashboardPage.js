@@ -1,7 +1,6 @@
 import {
     monthYearToString,
-    fetchIncomeMonthYears,
-    fetchExpensesMonthYears,
+    fetchAllMonthYears,
     fetchTransactionsForMonthYear,
     fetchBudgetedIncome,
     fetchExpenseLimits,
@@ -13,14 +12,7 @@ let incomesChart = null;
 let expensesChart = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const incomeMonthYears = await fetchIncomeMonthYears();
-    const expensesMonthYears = await fetchExpensesMonthYears();
-    // Join the two arrays of monthYears, sort by date
-    const monthYears = [...incomeMonthYears, ...expensesMonthYears].toSorted((my1, my2) => {
-        const date1 = `${my1.year}-${my1.month}`;
-        const date2 = `${my2.year}-${my2.month}`;
-        return new Date(date2) - new Date(date1);
-    });
+    const monthYears = await fetchAllMonthYears();
 
     // Set current month and year to most recent month and year
     const monthYear = monthYears[0];
@@ -139,6 +131,7 @@ const renderIncomesChart = (currentIncomes, totalBudgetedIncome) => {
             },
             plugins: {
                 legend: {
+                    onClick: () => {},
                     labels: {
                         color: '#ffffff',
                         font: {
@@ -226,6 +219,7 @@ const renderExpensesChart = (currentExpenses, totalExpenseLimits) => {
             },
             plugins: {
                 legend: {
+                    onClick: () => {},
                     labels: {
                         color: '#ffffff',
                         font: {

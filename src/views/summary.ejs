@@ -31,58 +31,27 @@
 
     <main id="flex">
 
-        <section id="financial-health-chart-section">
+        <section id="balances-chart-section">
             <span class="section-title"></span>
-            <canvas id="financial-health-chart" width="1000" height="200"></canvas>
+            <canvas id="balances-chart" width="850" height="200"></canvas>
         </section>
 
-        <!-- Financial Health Section
-        <section id="financial-health-chart-section">
-            <div>
-                <span class="section-title">Overall Financial Health</span>
-                <div id="balances">
-                    <h4>Balances of Last 3 Months</h4>
-                    <ul>
-                        <% last3Balances.forEach(function(balance) { %>
-                            <li><%= balance.month %>: $<%= balance.balance %></li>
-                        <% }) %>
-                    </ul>
-                </div>
-                <div id="savings-rates">
-                    <h4>Savings Rates of Last 3 Months</h4>
-                    <ul>
-                        <% last3SavingsRates.forEach(function(savingsRate) { %>
-                            <li><%= savingsRate.month %>: <%= savingsRate.savingsRate %>%</li>
-                        <% }) %>
-                    </ul>
-                </div>
-            </div>
-        </section> -->
+        <section id="savings-rates-chart-section">
+            <span class="section-title"></span>
+            <canvas id="savings-rates-chart" width="850" height="200"></canvas>
+        </section>
 
-        <!-- Financial Snapshot Section -->
         <section id="financial-snapshot">
             <div>
-                <span id="section-title">Monthly Financial Snapshot</span>
+                <span id="section-title"></span>
                 <div id="income-hotspots">
                     <h4>Income Hotspots</h4>
                     <ul>
-                        <% topIncomeCategories.forEach(function(incomeCategory) { %>
-                            <li><b>Category:</b> <%= incomeCategory.categoryName %></li>
-                            <li><b>Amount:</b> $<%= incomeCategory.totalAmount %></li>
-                            <li><b>Tips:</b> <%= incomeCategory.tips %></li>
-                            <br>
-                        <% }) %>
                     </ul>
                 </div>
                 <div id="expense-hotspots">
                     <h4>Expense Hotspots</h4>
                     <ul>
-                        <% topExpenseCategories.forEach(function(expenseCategory) { %>
-                            <li><b>Category:</b> <%= expenseCategory.categoryName %></li>
-                            <li><b>Amount:</b> $<%= expenseCategory.totalAmount %></li>
-                            <li><b>Tips:</b> <%= expenseCategory.tips %></li>
-                            <br>
-                        <% }) %>
                     </ul>
                 </div>
             </div>
@@ -91,38 +60,12 @@
         <!-- Budget Performance Section -->
         <section id="budget-performance">
             <div>
-                <span id="section-title">Budget Performance</span>
+                <span id="section-title"></span>
                 <div id="income-budgets">
                     <h4>Income Budgets</h4>
-                    <% if (incomeCategoriesUnderBudget.length > 0) { %>
-                        <ul>
-                            <% incomeCategoriesUnderBudget.forEach(function(incomeCategory) { %>
-                                <li><b>Category:</b> <%= incomeCategory.categoryName %></li>
-                                <li><b>Budget:</b> $<%= incomeCategory.budgetedAmount %></li>
-                                <li><b>Actual:</b> $<%= incomeCategory.actualAmount %></li>
-                                <li><b>Tips:</b> <%= incomeCategory.tips %></li>
-                                <br>
-                            <% }) %>
-                        </ul>
-                    <% } else { %>
-                        <p>No income categories were under budget this month.</p>
-                    <% } %>
                 </div>
                 <div id="expense-budgets">
                     <h4>Expense Budgets</h4>
-                    <% if (expenseCategoriesOverBudget.length > 0) { %>
-                        <ul>
-                            <% expenseCategoriesOverBudget.forEach(function(expenseCategory) { %>
-                                <li><b>Category:</b> <%= expenseCategory.categoryName %></li>
-                                <li><b>Budget:</b> $<%= expenseCategory.budgetedAmount %></li>
-                                <li><b>Actual:</b> $<%= expenseCategory.actualAmount %></li>
-                                <li><b>Tips:</b> <%= expenseCategory.tips %></li>
-                                <br>
-                            <% }) %>
-                        </ul>
-                    <% } else { %>
-                        <p>No expense categories were over budget this month.</p>
-                    <% } %>
                 </div>
             </div>
         </section>
@@ -154,7 +97,12 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/scripts/summaryCharts.js"></script>
+    <script type="module">
+        import {
+            onChangeMonthYearDropdown,
+        } from '../scripts/summaryPage.js';
+        window.onChangeMonthYearDropdown = onChangeMonthYearDropdown;
+    </script>
     <script src="/scripts/navbar.js"></script>
 
 </body>

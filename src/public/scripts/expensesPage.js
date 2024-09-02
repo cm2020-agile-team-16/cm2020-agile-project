@@ -106,6 +106,7 @@ const renderExpenseCategoryChart = (
             responsive: true,
             plugins: {
                 legend: {
+                    onClick: () => {},
                     display: false,
                 },
             },
@@ -121,6 +122,9 @@ const renderExpenseCategoryChart = (
                 }
             },
             plugins: {
+                legend: {
+                    onClick: () => {},
+                },
                 tooltip: {
                     callbacks: {
                         label: (tooltipItem) => {

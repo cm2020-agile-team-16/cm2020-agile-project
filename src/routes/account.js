@@ -126,7 +126,12 @@ router.post('/login', async (req, res, next) => {
     // the correct password was entered
     // create a user session and load the user's dashboard
     req.session.userId = user.user_id;
-    console.log('User ID set in session:', req.session.userId); // Debug log
+    req.session.save((err) => {
+        if (!err) {
+            console.log('User ID set in session:', req.session.userId);
+        }
+    });
+    
     res.redirect('/user/dashboard');
 });
 

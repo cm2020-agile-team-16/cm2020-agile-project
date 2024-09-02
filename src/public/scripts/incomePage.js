@@ -106,6 +106,7 @@ const renderIncomeCategoryChart = (
             responsive: true,
             plugins: {
                 legend: {
+                    onClick: () => {},
                     display: false,
                 },
             },
@@ -121,6 +122,9 @@ const renderIncomeCategoryChart = (
                 }
             },
             plugins: {
+                legend: {
+                    onClick: () => {},
+                },
                 tooltip: {
                     callbacks: {
                         label: (tooltipItem) => {
